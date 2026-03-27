@@ -255,7 +255,7 @@ npm run seed
 
 ## 🔐 Security Features
 
-- JWT Authentication
+- Firebase Authentication
 - Role-based access control
 - Rate limiting
 - Input validation & sanitization
