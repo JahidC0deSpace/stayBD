@@ -1,0 +1,266 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap");
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Base Styles ───────────────────────────────────────────────── */
+@layer base {
+  * {
+    @apply box-border;
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply font-sans text-gray-800 bg-gray-50 antialiased;
+    font-family: "Inter", system-ui, sans-serif;
+  }
+  h1 {
+    @apply text-3xl font-bold;
+  }
+  h2 {
+    @apply text-2xl font-semibold;
+  }
+  h3 {
+    @apply text-xl font-semibold;
+  }
+  a {
+    @apply text-primary-600 hover:text-primary-700 transition-colors;
+  }
+}
+
+/* ── Component Layer ────────────────────────────────────────────── */
+@layer components {
+  /* Buttons */
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5
+           bg-primary-500 hover:bg-primary-600 active:bg-primary-700
+           text-white font-semibold rounded-xl
+           transition-all duration-200 shadow-sm hover:shadow-md
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5
+           border-2 border-primary-500 text-primary-600 hover:bg-primary-50
+           font-semibold rounded-xl transition-all duration-200
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5
+           text-gray-600 hover:bg-gray-100 font-medium rounded-xl
+           transition-all duration-200;
+  }
+  .btn-danger {
+    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5
+           bg-red-500 hover:bg-red-600 text-white font-semibold rounded-xl
+           transition-all duration-200 disabled:opacity-50;
+  }
+  .btn-sm {
+    @apply px-3 py-1.5 text-sm rounded-lg;
+  }
+  .btn-lg {
+    @apply px-7 py-3.5 text-lg rounded-xl;
+  }
+  .btn-icon {
+    @apply p-2.5 rounded-full hover:bg-gray-100 transition-colors;
+  }
+
+  /* Form controls */
+  .input-field {
+    @apply w-full px-4 py-3 border border-gray-200 rounded-xl
+           bg-white text-gray-800 placeholder-gray-400
+           focus:outline-none focus:ring-2 focus:ring-primary-300 focus:border-primary-400
+           transition-all duration-200;
+  }
+  .input-error {
+    @apply border-red-400 focus:ring-red-200 focus:border-red-400;
+  }
+  .label {
+    @apply block text-sm font-semibold text-gray-700 mb-1.5;
+  }
+  .error-msg {
+    @apply text-xs text-red-500 mt-1;
+  }
+
+  /* Cards */
+  .card {
+    @apply bg-white rounded-2xl shadow-card hover:shadow-card-hover
+           transition-shadow duration-300 overflow-hidden;
+  }
+  .card-body {
+    @apply p-5;
+  }
+
+  /* Badges */
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full
+           text-xs font-semibold;
+  }
+  .badge-green {
+    @apply badge bg-green-100 text-green-700;
+  }
+  .badge-red {
+    @apply badge bg-red-100 text-red-600;
+  }
+  .badge-yellow {
+    @apply badge bg-yellow-100 text-yellow-700;
+  }
+  .badge-blue {
+    @apply badge bg-blue-100 text-blue-700;
+  }
+  .badge-gray {
+    @apply badge bg-gray-100 text-gray-600;
+  }
+  .badge-orange {
+    @apply badge bg-orange-100 text-orange-700;
+  }
+
+  /* Loader */
+  .spinner {
+    @apply animate-spin rounded-full border-4 border-gray-200 border-t-primary-500;
+  }
+
+  /* Section */
+  .section {
+    @apply py-12;
+  }
+  .container-main {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  /* Star rating */
+  .star-filled {
+    @apply text-yellow-400;
+  }
+  .star-empty {
+    @apply text-gray-300;
+  }
+
+  /* Page header */
+  .page-header {
+    @apply bg-white border-b border-gray-100 py-6 mb-8;
+  }
+}
+
+/* ── Leaflet map fix ───────────────────────────────────────────── */
+.leaflet-container {
+  @apply w-full rounded-2xl;
+  z-index: 1;
+}
+
+/* ── Custom scrollbar ──────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  @apply bg-gray-100;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-400 rounded-full;
+}
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-500;
+}
+
+/* ── React DatePicker overrides ────────────────────────────────── */
+.react-datepicker-wrapper {
+  @apply w-full;
+}
+.react-datepicker__input-container input {
+  @apply input-field;
+}
+.react-datepicker {
+  @apply shadow-lg border-gray-200 rounded-xl font-sans !important;
+}
+.react-datepicker__header {
+  @apply bg-primary-50 border-primary-100 !important;
+}
+.react-datepicker__day--selected,
+.react-datepicker__day--in-range {
+  @apply bg-primary-500 text-white rounded-lg !important;
+}
+.react-datepicker__day:hover {
+  @apply bg-primary-100 rounded-lg !important;
+}
+
+/* ── Transition animations ─────────────────────────────────────── */
+.fade-enter {
+  opacity: 0;
+}
+.fade-enter-active {
+  opacity: 1;
+  transition: opacity 300ms;
+}
+.fade-exit {
+  opacity: 1;
+}
+.fade-exit-active {
+  opacity: 0;
+  transition: opacity 300ms;
+}
+
+/* ── Chat bubble styles ────────────────────────────────────────── */
+.chat-bubble-sent {
+  @apply bg-primary-500 text-white rounded-2xl rounded-br-sm ml-auto;
+}
+.chat-bubble-received {
+  @apply bg-white text-gray-800 rounded-2xl rounded-bl-sm shadow-sm border border-gray-100;
+}
+
+/* ── Property grid ─────────────────────────────────────────────── */
+.property-grid {
+  @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6;
+}
+
+/* ── Status color map ──────────────────────────────────────────── */
+.status-pending {
+  @apply badge-yellow;
+}
+.status-approved {
+  @apply badge-green;
+}
+.status-confirmed {
+  @apply badge-green;
+}
+.status-rejected {
+  @apply badge-red;
+}
+.status-cancelled {
+  @apply badge-red;
+}
+.status-completed {
+  @apply badge-blue;
+}
+.status-archived {
+  @apply badge-gray;
+}
+
+@layer components {
+  .shadow-card {
+    @apply shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100;
+  }
+
+  .badge {
+    @apply px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider inline-flex items-center;
+  }
+
+  .badge-green {
+    @apply bg-green-50 text-green-600;
+  }
+  .badge-red {
+    @apply bg-red-50 text-red-600;
+  }
+  .badge-blue {
+    @apply bg-blue-50 text-blue-600;
+  }
+  .badge-orange {
+    @apply bg-orange-50 text-orange-600;
+  }
+  .badge-yellow {
+    @apply bg-yellow-50 text-yellow-600;
+  }
+  .badge-gray {
+    @apply bg-gray-50 text-gray-500;
+  }
+}
