@@ -31,17 +31,17 @@ router.get(
 );
 router.get("/map", getPropertiesForMap);
 
-// ─── Host-Only GET Routes (Must be before /:id) ─────────────────────────────
+//  Host-Only GET Routes (Must be before /:id)
 router.get("/host/my-listings", protect, canCreateListing, getMyListings);
 
-// ─── General Public Routes ──────────────────────────────────────────────────
+//  General Public Routes
 router.get("/", optionalAuth, getProperties);
 
-// ─── Dynamic Public Routes ──────────────────────────────────────────────────
+//  Dynamic Public Routes
 router.get("/:id", optionalAuth, getProperty);
 router.get("/:id/similar", getSimilarPropertiesHandler);
 
-// ─── Protected Routes (Host Only) ───────────────────────────────────────────
+//  Protected Routes (Host Only)
 router.post("/:id/book", protect, bookProperty);
 router.post("/", protect, canCreateListing, createProperty);
 router.put("/:id", protect, canCreateListing, updateProperty);

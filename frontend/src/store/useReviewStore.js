@@ -35,7 +35,6 @@ export const useReviewStore = create((set, get) => ({
       toast.success("Review submitted successfully!");
       get().resetForm();
 
-      // Trigger a refresh of the reviews list on the page
       if (onSuccess) onSuccess();
     } catch (err) {
       console.error("Review submission failed:", err);

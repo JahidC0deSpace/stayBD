@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-// Make sure to add the .js extension for ES Modules!
 import { BANGLADESH_DISTRICTS, DIVISIONS } from "./User.js";
 
 const amenitySchema = new mongoose.Schema(
@@ -32,7 +31,7 @@ const availabilityRuleSchema = new mongoose.Schema(
 
 const propertySchema = new mongoose.Schema(
   {
-    // ─── Ownership ─────────────────────────────────────────────────────────
+    //  Ownership
     host: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
@@ -40,7 +39,7 @@ const propertySchema = new mongoose.Schema(
       index: true,
     },
 
-    // ─── Listing Info ──────────────────────────────────────────────────────
+    //  Listing Info
     title: {
       type: String,
       required: [true, "Property title is required"],
@@ -76,7 +75,7 @@ const propertySchema = new mongoose.Schema(
       index: true,
     },
 
-    // ─── Pricing ───────────────────────────────────────────────────────────
+    //  Pricing
     pricePerNight: {
       type: Number,
       min: [0, "Price cannot be negative"],
@@ -91,7 +90,7 @@ const propertySchema = new mongoose.Schema(
     cleaningFee: { type: Number, default: 0, min: 0 },
     securityDeposit: { type: Number, default: 0, min: 0 },
 
-    // ─── Capacity ──────────────────────────────────────────────────────────
+    //  Capacity
     guestCapacity: {
       type: Number,
       required: [true, "Guest capacity is required"],
@@ -102,7 +101,7 @@ const propertySchema = new mongoose.Schema(
     bathrooms: { type: Number, default: 1, min: 0 },
     beds: { type: Number, default: 1, min: 0 },
 
-    // ─── Location ──────────────────────────────────────────────────────────
+    //  Location
     location: {
       division: {
         type: String,
@@ -130,7 +129,7 @@ const propertySchema = new mongoose.Schema(
       zipCode: { type: String, trim: true },
     },
 
-    // ─── Images ────────────────────────────────────────────────────────────
+    //  Images
     images: {
       type: [imageSchema],
       validate: {
@@ -139,11 +138,11 @@ const propertySchema = new mongoose.Schema(
       },
     },
 
-    // ─── Amenities ─────────────────────────────────────────────────────────
+    //  Amenities
     amenities: [amenitySchema],
     amenityNames: [{ type: String }],
 
-    // ─── House Rules ───────────────────────────────────────────────────────
+    //  House Rules
     houseRules: {
       smokingAllowed: { type: Boolean, default: false },
       petsAllowed: { type: Boolean, default: false },
@@ -155,11 +154,11 @@ const propertySchema = new mongoose.Schema(
       additionalRules: { type: String, default: "" },
     },
 
-    // ─── Availability ──────────────────────────────────────────────────────
+    //  Availability
     availability: [availabilityRuleSchema],
     instantBooking: { type: Boolean, default: false },
 
-    // ─── Approval Lifecycle ────────────────────────────────────────────────
+    //  Approval Lifecycle
     status: {
       type: String,
       enum: ["pending", "approved", "rejected", "archived"],
@@ -170,24 +169,24 @@ const propertySchema = new mongoose.Schema(
     approvedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     rejectionReason: { type: String, default: "" },
 
-    // ─── Pending Changes ───────────────────────────────────────────────────
+    //  Pending Changes
     pendingChanges: { type: mongoose.Schema.Types.Mixed, default: null },
     hasPendingChanges: { type: Boolean, default: false },
 
-    // ─── Analytics ─────────────────────────────────────────────────────────
+    //  Analytics
     totalBookings: { type: Number, default: 0 },
     totalReviews: { type: Number, default: 0 },
     averageRating: { type: Number, default: 0, min: 0, max: 5 },
     viewCount: { type: Number, default: 0 },
     occupancyRate: { type: Number, default: 0 },
 
-    // ─── Featured ──────────────────────────────────────────────────────────
+    //  Featured
     isFeatured: { type: Boolean, default: false },
     featuredUntil: Date,
 
     deletionRequested: { type: Boolean, default: false },
 
-    // ─── Soft Delete ───────────────────────────────────────────────────────
+    //  Soft Delete
     deletedAt: Date,
   },
   {
@@ -197,7 +196,7 @@ const propertySchema = new mongoose.Schema(
   },
 );
 
-// ─── Indexes ───────────────────────────────────────────────────────────────
+//  Indexes
 propertySchema.index({ "location.coordinates": "2dsphere" });
 propertySchema.index({ status: 1, rentalType: 1, "location.district": 1 });
 propertySchema.index({ pricePerNight: 1, pricePerMonth: 1 });
@@ -205,13 +204,13 @@ propertySchema.index({ averageRating: -1, totalBookings: -1 });
 propertySchema.index({ createdAt: -1 });
 propertySchema.index({ amenityNames: 1 });
 
-// ─── Virtual: Primary Image ─────────────────────────────────────────────────
+//  Virtual: Primary Image
 propertySchema.virtual("primaryImage").get(function () {
   const primary = this.images.find((img) => img.isPrimary);
   return primary ? primary.url : this.images[0]?.url || "";
 });
 
-// ─── Methods ───────────────────────────────────────────────────────────────
+//  Methods
 propertySchema.methods.isAvailableForDates = function (checkIn, checkOut) {
   const checkInDate = new Date(checkIn);
   const checkOutDate = new Date(checkOut);

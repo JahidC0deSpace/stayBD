@@ -4,16 +4,12 @@ import api from "../services/api";
 import { useAuthStore } from "./useAuthStore";
 
 export const useWishlistStore = create((set, get) => ({
-  // ── State ────────────────────────────────────────────────────────────────
-  items: [], // populated wishlist objects (Property docs)
-  wishlistIds: [], // just the IDs — used for fast heart toggle checks
+  //  State
+  items: [],
+  wishlistIds: [],
   isLoading: false,
   error: null,
 
-  // ── Seed from auth store on login ────────────────────────────────────────
-  // Call this once after login / on mount if the user is already logged in.
-  // The User model stores wishlist as an array of Property ObjectIds.
-  // getMe() populates them, so we can use the full objects directly.
   hydrate: (populatedWishlist = []) => {
     set({
       items: populatedWishlist,
@@ -23,7 +19,7 @@ export const useWishlistStore = create((set, get) => ({
     });
   },
 
-  // ── Fetch wishlist from backend ──────────────────────────────────────────
+  //  Fetch wishlist from backend
   fetchWishlist: async () => {
     set({ isLoading: true, error: null });
     try {
@@ -42,13 +38,10 @@ export const useWishlistStore = create((set, get) => ({
     }
   },
 
-  // ── Toggle a property in/out of the wishlist ─────────────────────────────
-  // Returns true if added, false if removed.
   toggleWishlist: async (itemId) => {
     const { wishlistIds, items } = get();
     const isInWishlist = wishlistIds.includes(itemId);
 
-    // Optimistic update
     if (isInWishlist) {
       set({
         items: items.filter((p) => (p._id ?? p) !== itemId),
@@ -60,19 +53,17 @@ export const useWishlistStore = create((set, get) => ({
 
     try {
       await api.post(`/users/wishlist/${itemId}`);
-      // Re-fetch to get the populated objects in sync
       await get().fetchWishlist();
       return !isInWishlist;
     } catch (err) {
-      // Rollback on failure
       await get().fetchWishlist();
       throw err;
     }
   },
 
-  // ── Check if an item is wishlisted (synchronous) ─────────────────────────
+  //  Check if an item is wishlisted
   isWishlisted: (itemId) => get().wishlistIds.includes(itemId),
 
-  // ── Clear on logout ───────────────────────────────────────────────────────
+  //  Clear on logout
   clear: () => set({ items: [], wishlistIds: [], error: null }),
 }));

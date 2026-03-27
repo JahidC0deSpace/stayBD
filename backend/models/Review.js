@@ -60,13 +60,13 @@ const reviewSchema = new mongoose.Schema(
   },
 );
 
-// ─── INDEXES ───────────────────────────────────────────────────────────────
+//  INDEXES
 reviewSchema.index({ target: 1, targetType: 1, isVisible: 1 });
 reviewSchema.index({ reviewer: 1 });
 reviewSchema.index({ booking: 1 }, { unique: true });
 reviewSchema.index({ rating: -1 });
 
-// ─── AGGREGATION LOGIC ─────────────────────────────────────────────────────
+//  AGGREGATION LOGIC
 
 /**
  * Recalculates average rating for both the Listing AND the Host
@@ -125,13 +125,12 @@ reviewSchema.statics.calculateRatings = async function (targetId, targetType) {
   }
 };
 
-// ─── MIDDLEWARE ────────────────────────────────────────────────────────────
+//  MIDDLEWARE
 
 reviewSchema.post("save", function () {
   this.constructor.calculateRatings(this.target, this.targetType);
 });
 
-// For updates and deletes
 reviewSchema.post(/^findOneAnd/, async function (doc) {
   if (doc) {
     await doc.constructor.calculateRatings(doc.target, doc.targetType);

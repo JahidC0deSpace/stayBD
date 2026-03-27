@@ -15,8 +15,7 @@ const getPagination = (query) => {
   return { page, limit, skip };
 };
 
-// ─── USER MANAGEMENT ─────────────────────────────────────────────────────
-
+// USER MANAGEMENT
 export const getUsers = async (req, res) => {
   try {
     // 1. Create a base query that excludes the current logged-in admin
@@ -196,7 +195,7 @@ export const updateUserFull = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
-// ─── PROPERTY & SERVICE APPROVALS ────────────────────────────────────────
+// PROPERTY & SERVICE APPROVALS
 
 export const getAdminProperties = asyncHandler(async (req, res) => {
   const { page, limit, skip } = getPagination(req.query);
@@ -345,8 +344,7 @@ export const approveService = asyncHandler(async (req, res) => {
 
   successResponse(res, 200, `Service ${action}d successfully`, service);
 });
-// ─── BOOKING MANAGEMENT ───────────────────────────────────────────────────
-
+//  BOOKING MANAGEMENT
 export const getAdminBookings = asyncHandler(async (req, res) => {
   const { page, limit, skip } = getPagination(req.query);
   const { status, paymentStatus } = req.query;
@@ -405,7 +403,7 @@ export const getAllBookings = asyncHandler(async (req, res) => {
     pages: Math.ceil(total / Number(limit)),
   });
 });
-// ─── DELETION REQUEST MANAGEMENT ──────────────────────────────────────────
+//  DELETION REQUEST MANAGEMENT
 
 export const handlePropertyDeletionRequest = asyncHandler(async (req, res) => {
   const { action } = req.body; // 'approve' or 'reject'

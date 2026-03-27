@@ -7,7 +7,7 @@ import { Property } from "../models/Property.js";
 import { Service } from "../models/Service.js";
 import { Experience } from "../models/Experience.js";
 
-// ─── HELPER FUNCTIONS ──────────────────────────────────────────────────
+//  HELPER FUNCTIONS
 
 const buildDateFilter = (range) => {
   const now = new Date();
@@ -54,7 +54,7 @@ const formatMonthlyData = (data, valueKey = "revenue") => {
   }));
 };
 
-// ─── CORE ADMIN ANALYTICS ──────────────────────────────────────────────
+//  CORE ADMIN ANALYTICS
 
 export const getAdminAnalytics = async (dateRange = "all") => {
   const dateFilter = buildDateFilter(dateRange);
@@ -120,7 +120,6 @@ export const getAdminAnalytics = async (dateRange = "all") => {
       .lean(),
   ]);
 
-  // Wrapped in "analytics" object so your frontend destructuring works flawlessly!
   return {
     analytics: {
       overview: {
@@ -178,7 +177,7 @@ export const getBookingStatusStats = async () => {
   return Object.fromEntries(stats.map((s) => [s._id || "unknown", s.count]));
 };
 
-// ─── CORE HOST/PROVIDER ANALYTICS ──────────────────────────────────────
+//  CORE HOST/PROVIDER ANALYTICS
 
 export const getHostAnalytics = async (hostId, dateRange = "year") => {
   const id =

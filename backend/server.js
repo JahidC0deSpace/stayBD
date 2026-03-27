@@ -1,9 +1,9 @@
 import express from "express";
-import { createServer } from "http"; // Required for Socket.io
+import { createServer } from "http";
 import cors from "cors";
 import dotenv from "dotenv";
 import { connectDB } from "./config/database.js";
-import { initializeSocketIO } from "./utils/socket.js"; // Import your socket initializer
+import { initializeSocketIO } from "./utils/socket.js";
 import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
 
 // Routes
@@ -45,7 +45,7 @@ app.use("/api/experiences", experienceRoutes);
 app.use("/api/properties", propertyRoutes);
 app.use("/api/services", serviceRoutes);
 app.use("/api/reviews", reviewRoutes);
-app.use("/api/chat", chatRoutes); // FIXED: Changed from /api/reviews to /api/chat
+app.use("/api/chat", chatRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/analytics", analyticsRoutes);
 app.use("/api/search", searchRoutes);

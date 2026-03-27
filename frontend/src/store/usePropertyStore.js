@@ -3,19 +3,19 @@ import { create } from "zustand";
 import { propertyAPI } from "../services/api";
 
 export const usePropertyStore = create((set, get) => ({
-  // ── Properties list state ────────────────────────────────────────────────────
+  //  Properties list state
   properties: [],
   pagination: {},
   loading: false,
   error: null,
 
-  // ── Single property state ────────────────────────────────────────────────────
+  //  Single property state
   property: null,
   propertyLoading: false,
   propertyError: null,
 
-  // ── Fetch list of properties ─────────────────────────────────────────────────
-  // Bug fixed: params are passed in at call time — no stale closure issue.
+  //  Fetch list of properties
+
   fetchProperties: async (params = {}) => {
     set({ loading: true, error: null });
     try {
@@ -33,7 +33,7 @@ export const usePropertyStore = create((set, get) => ({
     }
   },
 
-  // ── Fetch a single property by id ────────────────────────────────────────────
+  //  Fetch a single property by id
   fetchProperty: async (id) => {
     if (!id) return;
     set({ propertyLoading: true, propertyError: null, property: null });
@@ -49,9 +49,9 @@ export const usePropertyStore = create((set, get) => ({
     }
   },
 
-  // ── Clear single property (call on detail page unmount) ──────────────────────
+  //  Clear single property (call on detail page unmount)
   clearProperty: () => set({ property: null, propertyError: null }),
 
-  // ── Clear list (call on list page unmount if needed) ─────────────────────────
+  //  Clear list (call on list page unmount if needed)
   clearProperties: () => set({ properties: [], pagination: {}, error: null }),
 }));

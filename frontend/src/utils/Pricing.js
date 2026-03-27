@@ -1,20 +1,21 @@
 // src/utils/Pricing.js
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
+//  Helpers
 const safeNum = (val, fallback = 0) => {
   const n = Number(val);
   return isFinite(n) ? n : fallback;
 };
 
-// ─── NIGHTS CALC ──────────────────────────────────────────────────────────────
+//  NIGHTS CALC
 export function calcNights(checkIn, checkOut) {
   if (!checkIn || !checkOut) return 0;
-  // Subtracting date strings directly parses them as UTC midnight, which is perfect for this.
+
   const diff = (new Date(checkOut) - new Date(checkIn)) / (1000 * 60 * 60 * 24);
   return diff > 0 ? diff : 0;
 }
 
-// ─── PROPERTY ─────────────────────────────────────────────────────────────────
+//  PROPERTY
+
 export function calcPropertyPrice(data, rentalMode, form) {
   const nightlyPrice = safeNum(data.pricePerNight);
   const monthlyPrice = safeNum(data.pricePerMonth);
@@ -39,7 +40,7 @@ export function calcPropertyPrice(data, rentalMode, form) {
     return {
       lines,
       total: subtotal + cleaningFee + secDeposit,
-      valid: nights > 0, // Button enables only if dates are valid and check-out is after check-in
+      valid: nights > 0,
     };
   }
 
@@ -66,7 +67,8 @@ export function calcPropertyPrice(data, rentalMode, form) {
   return { lines: [], total: 0, valid: false };
 }
 
-// ─── SERVICE ──────────────────────────────────────────────────────────────────
+//  SERVICE
+
 export function calcServicePrice(data, form) {
   const hourlyPrice = safeNum(data.pricePerHour ?? data.hourlyRate);
   const minHours = safeNum(data.minimumHours, 1);
@@ -84,12 +86,11 @@ export function calcServicePrice(data, form) {
           ]
         : [],
     total: subtotal,
-    // Button enables only if they filled the text/date fields AND met minimum hours
     valid: !!(form.date && form.time && form.address) && hours >= minHours,
   };
 }
 
-// ─── EXPERIENCE ───────────────────────────────────────────────────────────────
+//  EXPERIENCE
 export function calcExperiencePrice(data, form) {
   const price = safeNum(data.pricePerPerson ?? data.price);
   const participants = safeNum(form.participants, 1);
@@ -106,12 +107,11 @@ export function calcExperiencePrice(data, form) {
           ]
         : [],
     total: subtotal,
-    // Button enables only if they picked a schedule AND a language
     valid: !!(form.scheduleId && form.language),
   };
 }
 
-// ─── MAIN DISPATCHER ──────────────────────────────────────────────────────────
+//  MAIN DISPATCHER
 export function calcPrice(selectedType, data, rentalMode, form) {
   if (!data) return { lines: [], total: 0, valid: false };
   if (selectedType === "property")
@@ -121,7 +121,7 @@ export function calcPrice(selectedType, data, rentalMode, form) {
   return { lines: [], total: 0, valid: false };
 }
 
-// ─── DATE UTILS ───────────────────────────────────────────────────────────────
+//  DATE UTILS
 export function today() {
   return new Date().toISOString().split("T")[0];
 }

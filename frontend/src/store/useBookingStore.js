@@ -12,7 +12,7 @@ import api from "../services/api";
 import { useAuthStore } from "./useAuthStore";
 import { validateAvailability } from "../components/booking/ServiceForm";
 
-// ── Ownership check helpers ───────────────────────────────────────────────────
+//  Ownership check helpers
 function getCurrentUserId() {
   const user = useAuthStore.getState().user;
 
@@ -61,7 +61,7 @@ const OWN_LISTING_MESSAGES = {
   experience: "You can't book your own experience.",
 };
 
-// ── Form defaults per booking type ───────────────────────────────────────────
+//  Form defaults per booking type
 function getDefaultForm(type, data) {
   if (type === "property")
     return {
@@ -90,9 +90,9 @@ function getDefaultRentalMode(data) {
   return null; // "both" → user picks
 }
 
-// ── Store ─────────────────────────────────────────────────────────────────────
+//  Store
 export const useBookingStore = create((set, get) => ({
-  // ── State ───────────────────────────────────────────────────────────────────
+  //  State
   selectedType: "property",
   loading: false,
   submitting: false,
@@ -103,8 +103,7 @@ export const useBookingStore = create((set, get) => ({
   modal: null,
   error: null,
 
-  // ── Derived (computed on read, not stored) ───────────────────────────────────
-  // Call get() inside components: useBookingStore(s => s.getPrice())
+  //  Derived (computed on read, not stored)
   getPrice: () => {
     const { selectedType, data, rentalMode, form } = get();
     return calcPrice(selectedType, data, rentalMode, form);
@@ -117,7 +116,7 @@ export const useBookingStore = create((set, get) => ({
     return checkIsOwnListing(data) ? OWN_LISTING_MESSAGES[selectedType] : null;
   },
 
-  // ── Actions ──────────────────────────────────────────────────────────────────
+  //  Actions
   addLog: (msg, type = "info") => {
     const time = new Date().toLocaleTimeString();
     set((state) => ({
@@ -170,7 +169,7 @@ export const useBookingStore = create((set, get) => ({
 
   closeModal: () => set({ modal: null }),
 
-  // ── Reset the whole booking state (e.g. on page unmount) ────────────────────
+  //  Reset the whole booking state (e.g. on page unmount)
   reset: () =>
     set({
       selectedType: "property",
@@ -184,7 +183,7 @@ export const useBookingStore = create((set, get) => ({
       error: null,
     }),
 
-  // ── Submit booking ───────────────────────────────────────────────────────────
+  //  Submit booking
   handleSubmit: async () => {
     const { selectedType, data, rentalMode, form, addLog } = get();
 
@@ -196,7 +195,7 @@ export const useBookingStore = create((set, get) => ({
       return;
     }
 
-    // ── NEW: service availability guard ─────────────────────────────────────────
+    //  service availability guard
     if (selectedType === "service") {
       const { date, time } = form;
       const error = validateAvailability(data?.availability, date, time);
@@ -229,7 +228,7 @@ export const useBookingStore = create((set, get) => ({
         }
       }
 
-      // Mock / free path — show confirmation modal
+      //free path — show confirmation modal
       if (!requiresPayment) {
         set({
           modal: {

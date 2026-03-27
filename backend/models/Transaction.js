@@ -18,7 +18,7 @@ const transactionSchema = new mongoose.Schema(
       required: [true, "Payee reference is required"],
     },
 
-    // ─── Payment Gateway Details ───────────────────────────────────────────
+    //  Payment Gateway Details
     paymentGateway: {
       type: String,
       enum: ["stripe", "sslcommerz", "bkash", "aamarpay", "cash"],
@@ -28,11 +28,11 @@ const transactionSchema = new mongoose.Schema(
       type: String,
       required: [true, "Transaction ID is required"],
       unique: true,
-      index: true, // Stripe Session ID, SSLCommerz tran_id, or bKash TrxID
+      index: true, // Stripe Session ID
     },
     gatewayPaymentId: { type: String, default: "" }, // Secondary ID
 
-    // ─── Amounts ───────────────────────────────────────────────────────────
+    //  Amounts
     currency: { type: String, default: "BDT" },
     totalAmount: {
       type: Number,
@@ -47,14 +47,14 @@ const transactionSchema = new mongoose.Schema(
       required: [true, "Provider earning is required"],
     },
 
-    // ─── Payment Status (Guest -> Platform) ────────────────────────────────
+    //  Payment Status (Guest -> Platform)
     status: {
       type: String,
       enum: ["pending", "succeeded", "failed", "refunded", "disputed"],
       default: "pending",
     },
 
-    // ─── Payout Status (Platform -> Host) ──────────────────────────────────
+    //  Payout Status (Platform -> Host)
     payoutStatus: {
       type: String,
       enum: ["pending", "processing", "paid"],
@@ -62,7 +62,7 @@ const transactionSchema = new mongoose.Schema(
     },
     payoutDate: Date,
 
-    // ─── Metadata & Refunds ────────────────────────────────────────────────
+    //  Metadata & Refunds
     metadata: { type: mongoose.Schema.Types.Mixed, default: {} },
     failureMessage: { type: String, default: "" },
     refundId: { type: String, default: "" },

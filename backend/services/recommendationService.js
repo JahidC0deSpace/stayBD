@@ -1,8 +1,6 @@
 /**
  * Recommendation Service
- * Rule-based property recommendations
  */
-
 import { Property } from "../models/Property.js";
 import { Booking } from "../models/Booking.js";
 
@@ -15,7 +13,6 @@ export const getPersonalizedRecommendations = async (
   limit = 6,
 ) => {
   try {
-    // Get user's booking history to understand preferences
     const userBookings = await Booking.find({
       guest: userId,
       status: "completed",
@@ -25,7 +22,7 @@ export const getPersonalizedRecommendations = async (
       .lean();
 
     let preferredDistricts = [userDistrict];
-    let avgPrice = 2000; // Default avg price in BDT
+    let avgPrice = 2000;
 
     if (userBookings.length > 0) {
       const districts = userBookings
@@ -43,8 +40,6 @@ export const getPersonalizedRecommendations = async (
 
     const priceMin = avgPrice * 0.85; // -15%
     const priceMax = avgPrice * 1.15; // +15%
-
-    // Find recommendations based on preferences
     const recommendations = await Property.find({
       status: "approved",
       $or: [
@@ -63,7 +58,7 @@ export const getPersonalizedRecommendations = async (
     return recommendations;
   } catch (err) {
     console.error("Recommendation error:", err);
-    return []; // Return empty array so the frontend doesn't break if this fails!
+    return [];
   }
 };
 

@@ -16,7 +16,7 @@ export const handleValidationErrors = (req, res, next) => {
   next();
 };
 
-// ─── Auth Validators ──────────────────────────────────────────────────────────
+//  Auth Validators
 
 export const validateRegistration = [
   body("name")
@@ -41,7 +41,7 @@ export const validateRegistration = [
   handleValidationErrors,
 ];
 
-// ─── Experience Validators (New!) ───────────────────────────────────────────
+//  Experience Validators
 
 export const validateExperience = [
   body("title").trim().notEmpty().isLength({ min: 5, max: 100 }),
@@ -56,7 +56,7 @@ export const validateExperience = [
   handleValidationErrors,
 ];
 
-// ─── Property Validators ──────────────────────────────────────────────────────
+//  Property Validators
 
 export const validateProperty = [
   body("title")
@@ -97,7 +97,7 @@ export const validateProperty = [
   handleValidationErrors,
 ];
 
-// ─── Booking Validators ───────────────────────────────────────────────────────
+//  Booking Validators
 
 export const validateBooking = [
   body("checkIn")
@@ -122,7 +122,7 @@ export const validateBooking = [
   handleValidationErrors,
 ];
 
-// ─── Review Validators ────────────────────────────────────────────────────────
+//  Review Validators
 
 export const validateReview = [
   body("rating")
@@ -135,7 +135,7 @@ export const validateReview = [
   handleValidationErrors,
 ];
 
-// ─── ID Validators ────────────────────────────────────────────────────────────
+//  ID Validators
 
 export const validateObjectId = (paramName) => [
   param(paramName).isMongoId().withMessage(`Invalid ${paramName} format`),

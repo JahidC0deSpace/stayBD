@@ -100,7 +100,7 @@ const BLOCKED_FIELDS = new Set([
   "deletionRequestedAt",
 ]);
 
-// Fields safe to return to the provider (excludes internal admin flags)
+// Fields safe to return to the provider
 const PROVIDER_SAFE_FIELDS =
   "title description category pricePerHour minimumHours currency " +
   "serviceArea images availability skills languages experience " +
@@ -276,7 +276,7 @@ export const createService = asyncHandler(async (req, res) => {
  * Update service
  */
 export const updateService = asyncHandler(async (req, res) => {
-  // ── 1. Fetch and guard ───────────────────────────────────────────────────
+  //  1. Fetch and guard
   const service = await Service.findById(req.params.id);
   if (!service || service.deletedAt)
     throw createError(404, "Service not found");
@@ -287,13 +287,13 @@ export const updateService = asyncHandler(async (req, res) => {
   if (!isOwner && !isAdmin)
     throw createError(403, "Not authorized to update this service");
 
-  // ── 2. Strip blocked fields from the incoming body ───────────────────────
+  //  2. Strip blocked fields from the incoming body
   const raw = req.body;
   const updates = {};
   for (const key of Object.keys(raw)) {
     if (!BLOCKED_FIELDS.has(key)) updates[key] = raw[key];
   }
-  // ── 3. Sanitize and validate free-text fields ────────────────────────────
+  //  3. Sanitize and validate free-text fields
   if (updates.title !== undefined) {
     updates.title = sanitizeText(updates.title);
     if (updates.title.length < 5)
@@ -332,7 +332,7 @@ export const updateService = asyncHandler(async (req, res) => {
     updates.languages = updates.languages.map(sanitizeText).filter(Boolean);
   }
 
-  // ── 4. Normalise availability ────────────────────────────────────────────
+  //  4. Normalise availability
   if (updates.availability !== undefined) {
     const normalised = normaliseAvailability(updates.availability);
     if (normalised !== null) {
@@ -342,7 +342,7 @@ export const updateService = asyncHandler(async (req, res) => {
     }
   }
 
-  // ── 5. Apply the update ──────────────────────────────────────────────────
+  //  5. Apply the update
   if (isAdmin) {
     // Admin: overwrite live data immediately and clear any pending review
     Object.assign(service, updates);
@@ -357,7 +357,7 @@ export const updateService = asyncHandler(async (req, res) => {
 
   await service.save();
 
-  // ── 6. Return the safe projection ───────────────────────────────────────
+  //  6. Return the safe projection
   const safeService = await Service.findById(service._id)
     .select(PROVIDER_SAFE_FIELDS)
     .lean();

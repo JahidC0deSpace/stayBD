@@ -5,7 +5,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./services/firebase";
 import { useAuthStore } from "./store/useAuthStore";
 import { useWishlistStore } from "./store/useWishlistStore";
-import api from "./services/api"; // Your configured axios instance
+import api from "./services/api";
 
 // Pages
 import HomePage from "./pages/HomePage";
@@ -91,13 +91,13 @@ function App() {
           const token = await firebaseUser.getIdToken();
           api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
-          // 🛡️ THE SAFETY NET: Guaranteed basic data from Firebase
+          // Guaranteed basic data from Firebase
           const fallbackUser = {
             uid: firebaseUser.uid,
             email: firebaseUser.email,
             name: firebaseUser.displayName || firebaseUser.email.split("@")[0],
             avatar: { url: firebaseUser.photoURL || "" },
-            role: "user", // Default
+            role: "user",
           };
 
           try {
@@ -138,7 +138,6 @@ function App() {
     return () => unsubscribe();
   }, [isHydrated, login, logout, setAuthLoading]);
 
-  // IMPORTANT: Do not render routes until we are hydrated and auth check is done
   if (!isHydrated || isAuthLoading) {
     return <LoadingScreen />;
   }

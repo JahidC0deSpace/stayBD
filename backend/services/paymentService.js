@@ -12,7 +12,7 @@ const COMMISSION_RATE = 0.1;
 const CURRENCY = "bdt";
 const CURRENCY_MULTIPLIER = 100;
 
-// ─── Helper: Calculate Property Prices ───────────────────────────────────────
+//  Helper: Calculate Property Prices
 export const calculateBookingPrice = (booking, property) => {
   const checkIn = new Date(booking.checkIn);
   const checkOut = new Date(booking.checkOut);
@@ -44,7 +44,7 @@ export const calculateBookingPrice = (booking, property) => {
   };
 };
 
-// ─── Helper: Calculate Service Prices ────────────────────────────────────────
+//  Helper: Calculate Service Prices
 export const calculateServicePrice = (hours, pricePerHour) => {
   const basePrice = Math.round(hours * pricePerHour);
   const serviceFee = Math.round(basePrice * 0.03);
@@ -61,7 +61,7 @@ export const calculateServicePrice = (hours, pricePerHour) => {
   };
 };
 
-// ─── Create Stripe Checkout Session ──────────────────────────────────────────
+//  Create Stripe Checkout Session
 export const createCheckoutSession = async (bookingId, guestId) => {
   const booking = await Booking.findById(bookingId)
     .populate("guest", "name email")
@@ -164,14 +164,12 @@ export const createCheckoutSession = async (bookingId, guestId) => {
   return { sessionId: session.id, sessionUrl: session.url };
 };
 
-// ─── Verify Payment Session ───────────────────────────────────────────────────
+//  Verify Payment Session
 export const verifySession = async (sessionId) => {
-  // 1. Fetch full session from Stripe (expand payment_intent to get the ID)
   const session = await stripe.checkout.sessions.retrieve(sessionId, {
     expand: ["payment_intent"],
   });
 
-  // 2. Confirm payment was actually made
   if (session.payment_status !== "paid") {
     throw createError(400, "Payment has not been completed");
   }
@@ -186,18 +184,11 @@ export const verifySession = async (sessionId) => {
     bookingType,
   } = session.metadata;
 
-  // 3. Build a reliable transaction ID — prefer payment_intent.id (the most
-  //    stable Stripe identifier), fall back to the session ID only if needed.
-  //    This fixes the null payment_intent bug in test mode.
   const finalTransactionId =
     (typeof session.payment_intent === "object"
-      ? session.payment_intent?.id // expanded object
-      : session.payment_intent) || // already a string
-    session.id; // last resort fallback
+      ? session.payment_intent?.id
+      : session.payment_intent) || session.id;
 
-  // 4. Idempotency check — if already processed, return the booking as-is.
-  //    Check the Transaction collection first (more reliable than booking status)
-  //    so we don't silently skip analytics updates on retry.
   const existingTransaction = await Transaction.findOne({
     $or: [
       { stripeSessionId: sessionId },
@@ -245,7 +236,6 @@ export const verifySession = async (sessionId) => {
     return booking;
   }
 
-  // 5. Update booking to confirmed + paid
   booking.status = "confirmed";
   booking.paymentStatus = "paid";
   booking.stripePaymentIntentId = finalTransactionId;
@@ -272,7 +262,7 @@ export const verifySession = async (sessionId) => {
       }
     }
   }
-  // 6. Create Transaction record
+
   await Transaction.create({
     booking: bookingId,
     payer: guestId,
@@ -287,7 +277,6 @@ export const verifySession = async (sessionId) => {
     status: "succeeded",
   });
 
-  // 7. Update payee earnings
   if (payeeId) {
     await User.findByIdAndUpdate(payeeId, {
       $inc: {
@@ -297,7 +286,6 @@ export const verifySession = async (sessionId) => {
     });
   }
 
-  // 8. Lock property dates if applicable
   if (bookingType === "property") {
     await lockPropertyDates(
       booking.property,

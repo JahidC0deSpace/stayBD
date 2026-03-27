@@ -9,10 +9,9 @@ import { optionalAuth } from "../middleware/authMiddleware.js";
 const router = express.Router();
 
 /**
- * @route   GET /api/search/recommendations
- * @desc    Get personalized, popular, and trending properties
- * @access  Public (Optional Auth)
- * MUST BE AT THE TOP!
+ * GET /api/search/recommendations
+ * Get personalized, popular, and trending properties
+ * Public (Optional Auth)
  */
 router.get(
   "/recommendations",
@@ -61,8 +60,8 @@ router.get(
 );
 
 /**
- * @route   GET /api/search/districts
- * @desc    Get all districts with property counts
+ *  GET /api/search/districts
+ *  Get all districts with property counts
  */
 router.get(
   "/districts",
@@ -77,8 +76,8 @@ router.get(
 );
 
 /**
- * @route   GET /api/search
- * @desc    Unified search across Properties, Services, and Experiences
+ * GET /api/search
+ * Unified search across Properties, Services, and Experiences
  */
 router.get(
   "/",

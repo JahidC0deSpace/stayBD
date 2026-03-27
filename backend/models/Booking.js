@@ -22,7 +22,7 @@ const bookingSchema = new mongoose.Schema(
       index: true,
     },
 
-    // ─── Reference Links ───────────────────────────────────────────────────
+    //  Reference Links
     property: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Property",
@@ -42,7 +42,7 @@ const bookingSchema = new mongoose.Schema(
     // For Experiences: Reference the specific slot inside the experience schedule
     experienceSlotId: { type: mongoose.Schema.Types.ObjectId, default: null },
 
-    // ─── Dates & Timing ────────────────────────────────────────────────────
+    //  Dates & Timing
     // Properties use checkIn/Out. Experiences/Services use bookingDate + Times.
     checkIn: { type: Date, index: true },
     checkOut: { type: Date },
@@ -57,11 +57,11 @@ const bookingSchema = new mongoose.Schema(
       min: [1, "At least 1 guest/participant is required"],
     },
     totalHours: { type: Number, default: null },
-    // totalNights: { type: Number, default: null },  // property bookings
+    totalNights: { type: Number, default: null }, // property bookings
     serviceAddress: { type: String, default: "" },
     bookingLanguage: { type: String, default: "" },
 
-    // ─── Pricing Breakdown ─────────────────────────────────────────────────
+    //  Pricing Breakdown
     priceBreakdown: {
       basePrice: { type: Number, required: true }, // Price per night OR price per person
       quantity: { type: Number, default: 1 }, // Number of nights OR number of guests
@@ -80,7 +80,7 @@ const bookingSchema = new mongoose.Schema(
     providerEarning: { type: Number, required: true, default: 0 },
     commissionRate: { type: Number, default: 10 }, // Percentage
 
-    // ─── Status ────────────────────────────────────────────────────────────
+    //  Status
     status: {
       type: String,
       enum: [
@@ -102,7 +102,7 @@ const bookingSchema = new mongoose.Schema(
     },
     cancelledAt: Date,
 
-    // ─── Payment ───────────────────────────────────────────────────────────
+    //  Payment
     paymentStatus: {
       type: String,
       enum: ["unpaid", "paid", "refunded", "failed", "partially_refunded"],
@@ -114,12 +114,12 @@ const bookingSchema = new mongoose.Schema(
     paidAt: Date,
     refundAmount: { type: Number, default: 0 },
 
-    // ─── Logistics & Communication ─────────────────────────────────────────
+    //  Logistics & Communication
     specialRequests: { type: String, default: "", maxlength: 500 },
     hostNotes: { type: String, default: "" },
     chatRoomId: { type: String, default: "" },
 
-    // ─── Early Checkout ────────────────────────────────────────────────────
+    //  Early Checkout
     earlyCheckoutRequested: { type: Boolean, default: false },
     earlyCheckoutRequestedAt: Date,
     earlyCheckoutNotes: { type: String, default: "" },

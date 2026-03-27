@@ -98,10 +98,10 @@ export const DISTRICTS_BY_DIVISION = {
   Mymensingh: ["Jamalpur", "Mymensingh", "Netrokona", "Sherpur"],
 };
 
-// ✅ Flat list of all 64 districts (for dropdowns, search, filters)
+// Flat list of all 64 districts (for dropdowns, search, filters)
 export const ALL_DISTRICTS = Object.values(DISTRICTS_BY_DIVISION).flat();
 
-// ── Property Types ───────────────────────────────────────────────────────
+//  Property Types
 export const PROPERTY_TYPES = [
   { value: "apartment", label: "🏢 Apartment" },
   { value: "house", label: "🏠 House" },
@@ -115,14 +115,14 @@ export const PROPERTY_TYPES = [
   { value: "other", label: "🏗 Other" },
 ];
 
-// ✅ FIXED (FIX 10): Rental types — match backend enum values
+// Rental types
 export const RENTAL_TYPES = [
   { value: "short_term", label: "Short-Term (Per Night)" },
   { value: "long_term", label: "Long-Term (Per Month)" },
   { value: "both", label: "Both" },
 ];
 
-// ── Service Categories ───────────────────────────────────────────────────
+//  Service Categories
 export const SERVICE_CATEGORIES = [
   { value: "cleaning", label: "🧹 Cleaning" },
   { value: "cooking", label: "🍳 Cooking" },
@@ -147,7 +147,7 @@ export const SERVICE_CATEGORIES = [
   { value: "other", label: "✨ Other" },
 ];
 
-//------------Days-------
+//Days
 export const DAYS = [
   "Monday",
   "Tuesday",
@@ -157,7 +157,7 @@ export const DAYS = [
   "Saturday",
   "Sunday",
 ];
-// ── Experience Categories ────────────────────────────────────────────────
+//  Experience Categories
 export const EXPERIENCE_CATEGORIES = [
   { value: "food_tour", label: "🍜 Food Tour" },
   { value: "cultural_tour", label: "🎭 Cultural Tour" },
@@ -177,7 +177,7 @@ export const EXPERIENCE_CATEGORIES = [
   { value: "other", label: "✨ Other" },
 ];
 
-// ── Common Amenities ─────────────────────────────────────────────────────
+//  Common Amenities
 export const AMENITIES = [
   { value: "wifi", label: "📶 WiFi" },
   { value: "ac", label: "❄️ Air Conditioning" },
@@ -197,7 +197,7 @@ export const AMENITIES = [
   { value: "garden", label: "🌻 Garden" },
 ];
 
-// ── Booking & Payment Status Maps (metadata) ─────────────────────────────
+//  Booking & Payment Status Maps
 export const BOOKING_STATUSES = {
   pending: { label: "Pending", color: "yellow" },
   confirmed: { label: "Confirmed", color: "green" },
@@ -212,7 +212,7 @@ export const PAYMENT_STATUSES = {
   failed: { label: "Failed", color: "red" },
 };
 
-// ── UI Constants: Tailwind Color Classes (moved from constants.js) ───────
+//   Tailwind Color Classes
 export const BOOKING_STATUS_COLORS = {
   pending: "bg-yellow-100 text-yellow-700",
   confirmed: "bg-green-100 text-green-700",
@@ -228,7 +228,7 @@ export const PAYMENT_STATUS_COLORS = {
   failed: "bg-red-100 text-red-700",
 };
 
-// ── User Roles (moved from constants.js) ─────────────────────────────────
+//  User Roles
 export const ROLES = {
   GUEST: "guest",
   HOST: "host",
@@ -236,24 +236,14 @@ export const ROLES = {
   ADMIN: "admin",
 };
 
-// ── API Base URL (moved from constants.js) ───────────────────────────────
+//  API Base URL
 export const API_BASE_URL =
   import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
-// ── Formatting Helpers (moved from constants.js) ─────────────────────────
-/**
- * Format amount as Bangladeshi Taka (৳)
- * @param {number|string} amount
- * @returns {string} Formatted currency string
- */
+//  Formatting Helpers
 export const formatCurrency = (amount) =>
   `৳${Math.round(Number(amount || 0)).toLocaleString("en-IN")}`;
 
-/**
- * Format date as "15 Mar 2024"
- * @param {string|Date} date
- * @returns {string} Formatted date string
- */
 export const formatDate = (date) =>
   new Date(date).toLocaleDateString("en-BD", {
     day: "numeric",
@@ -261,11 +251,6 @@ export const formatDate = (date) =>
     year: "numeric",
   });
 
-/**
- * Format datetime as "Mar 15, 2024, 2:30 PM"
- * @param {string|Date} date
- * @returns {string} Formatted datetime string
- */
 export const formatDateTime = (date) =>
   new Date(date).toLocaleString("en-BD", {
     dateStyle: "medium",

@@ -98,7 +98,7 @@ export const restrictToAdmin = (req, res, next) => {
 export const requireApproval = (req, res, next) => {
   if (req.user.role === "guest") return next();
 
-  // ✅ FIX: Changed isApproved to isVerified to match your MongoDB schema
+  // isApproved to isVerified to match your MongoDB schema
   if (!req.user.isVerified) {
     return next(new AppError("Your account is pending admin approval.", 403));
   }
@@ -124,7 +124,7 @@ export const optionalAuth = async (req, res, next) => {
     next(); // Just move on without req.user
   }
 };
-
+// Admin Only
 export const isAdmin = (req, res, next) => {
   if (req.user && req.user.role === "admin") {
     next();

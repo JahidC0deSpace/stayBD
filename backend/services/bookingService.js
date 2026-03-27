@@ -142,7 +142,6 @@ export const createServiceBooking = async (guestId, serviceId, bookingData) => {
   if (service.status !== "approved")
     throw createError(400, "Service is not available");
 
-  // ── NEW: validate against provider's availability schedule ──────────────────
   const checkInDate = new Date(checkIn);
   const dayNames = [
     "sunday",
@@ -161,7 +160,6 @@ export const createServiceBooking = async (guestId, serviceId, bookingData) => {
     typeof availability === "object" &&
     !Array.isArray(availability)
   ) {
-    // Object format: { monday: { available: true, slots: [{from, to}] }, ... }
     const dayEntry = availability[chosenDay];
 
     if (!dayEntry?.available) {
@@ -175,8 +173,7 @@ export const createServiceBooking = async (guestId, serviceId, bookingData) => {
       );
     }
 
-    // If specific time slots exist, validate the booking time falls within one
-    const bookingTime = bookingData?.time; // pass time in bookingData from frontend
+    const bookingTime = bookingData?.time;
     if (
       bookingTime &&
       Array.isArray(dayEntry.slots) &&
@@ -202,7 +199,6 @@ export const createServiceBooking = async (guestId, serviceId, bookingData) => {
       }
     }
   } else if (Array.isArray(availability) && availability.length > 0) {
-    // Simple array format: ["monday", "tuesday", ...]
     if (!availability.includes(chosenDay)) {
       throw createError(400, `Provider is not available on ${chosenDay}s.`);
     }
@@ -218,9 +214,9 @@ export const createServiceBooking = async (guestId, serviceId, bookingData) => {
     bookingType: "service",
     checkIn: new Date(checkIn),
     checkOut: new Date(checkOut),
-    guestCount: 1, // services are always 1 requester
-    totalHours: hours, // now saves correctly
-    serviceAddress: address || "", // now saves the address
+    guestCount: 1,
+    totalHours: hours,
+    serviceAddress: address || "",
     priceBreakdown,
     totalAmount: priceBreakdown.totalAmount,
     specialRequests: specialRequests || "",
@@ -280,11 +276,9 @@ export const processEarlyCheckout = async (
     { new: true },
   );
 
-  // Free up the remaining dates on the property
   if (booking.property) {
     await Property.findById(booking.property._id).then(async (prop) => {
       if (prop) {
-        // Remove the original booking block and add the shorter one
         prop.availability = prop.availability.filter(
           (rule) =>
             rule.reason !== "booked" ||
@@ -307,9 +301,9 @@ export const processEarlyCheckout = async (
     });
   }
 
-  console.log(
-    `✅ Early checkout processed for booking ${booking.bookingReference}`,
-  );
+  // console.log(
+  //   `Early checkout processed for booking ${booking.bookingReference}`,
+  // );
   return updatedBooking;
 };
 

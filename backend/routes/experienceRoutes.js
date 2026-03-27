@@ -40,15 +40,14 @@ router.get("/:id", getExperienceById);
 router.post("/:id/book", protect, bookExperience);
 
 router.patch("/:id/approve", protect, isAdmin, approveExperience);
-// Make sure to use your admin middleware here!
 router.patch(
   "/:id/deletion-request",
   protect,
   isAdmin,
   handleExperienceDeletionRequest,
 );
-// ─── IMAGE UPLOADS (Inline Controller) ───────────────────────────────────────
-// ─── IMAGE UPLOADS ───────────────────────────────────────
+//  IMAGE UPLOADS (Inline Controller)
+
 router.post(
   "/:id/images",
   protect,

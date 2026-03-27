@@ -466,7 +466,6 @@ export const bookExperience = asyncHandler(async (req, res) => {
   // 2. Financials
   const basePrice = experience.pricePerPerson;
   const subtotal = basePrice * requestedCount;
-  // totalAmount will be used by Booking schema pre-save to calculate commission
   const totalAmount = subtotal;
 
   // 3. Create Booking (Fully aligned with Booking.js ESM model)

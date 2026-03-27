@@ -151,7 +151,7 @@ const userSchema = new mongoose.Schema(
     },
     bio: { type: String, maxlength: 500, default: "" },
 
-    // 🆕 Added Wishlist array to support favoriting properties!
+    // Wishlist array to support favoriting properties!
     wishlist: [
       {
         type: mongoose.Schema.Types.ObjectId,

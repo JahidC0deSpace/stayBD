@@ -537,9 +537,7 @@ export const bookProperty = asyncHandler(async (req, res) => {
   });
 });
 
-// ==========================================
-// 🆕 RECOMMENDATION ENDPOINTS
-// ==========================================
+// RECOMMENDATION ENDPOINTS
 
 /**
  * GET /api/properties/:id/similar

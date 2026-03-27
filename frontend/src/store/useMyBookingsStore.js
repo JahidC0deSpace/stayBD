@@ -4,7 +4,7 @@ import toast from "react-hot-toast";
 import { bookingAPI } from "../services/api";
 
 export const useMyBookingsStore = create((set, get) => ({
-  // ── State ────────────────────────────────────────────────────────
+  //  State
   bookings: [],
   loading: true,
   activeTab: "all",
@@ -14,7 +14,7 @@ export const useMyBookingsStore = create((set, get) => ({
   cancelReason: "",
   cancelling: false,
 
-  // ── Actions ──────────────────────────────────────────────────────
+  //  Actions
   setActiveTab: (tab) => set({ activeTab: tab }),
 
   fetchBookings: async () => {
@@ -48,7 +48,6 @@ export const useMyBookingsStore = create((set, get) => ({
       await bookingAPI.cancelBooking(cancelTarget._id, cancelReason);
       toast.success("Booking cancelled");
 
-      // Refetch to ensure all fields/statuses are updated
       await fetchBookings();
 
       set({ cancelTarget: null, cancelReason: "", cancelling: false });

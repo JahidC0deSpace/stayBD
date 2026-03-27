@@ -25,7 +25,7 @@ export const updateMe = asyncHandler(async (req, res) => {
     "email",
     "phone",
     "address",
-    "avatar", // This handles the manual link
+    "avatar",
     "bio",
     "socialLinks",
   ];
@@ -35,7 +35,6 @@ export const updateMe = asyncHandler(async (req, res) => {
     if (req.body[field] !== undefined) updates[field] = req.body[field];
   });
 
-  // --- NEW: Cloudinary Integration ---
   // If a file was uploaded via multer, override the avatar field
   if (req.file) {
     // req.file.path is typically where the Cloudinary URL sits

@@ -10,7 +10,7 @@ import { calcPrice } from "../utils/Pricing";
 import { auth } from "../services/firebase";
 import api from "../services/api";
 
-// ── Ownership check helpers ───────────────────────────────────────────────────
+//  Ownership check helpers
 function getCurrentUserId() {
   return auth?.currentUser?.uid || null;
 }
@@ -114,7 +114,7 @@ export function useBooking() {
     [selectedType],
   );
 
-  // ── Clear error whenever guest changes any form field ────────────────────────
+  //  Clear error whenever guest changes any form field
   const updateForm = useCallback((updates) => {
     setForm((prev) => ({ ...prev, ...updates }));
     setError(null);
@@ -135,7 +135,7 @@ export function useBooking() {
     : null;
 
   const handleSubmit = useCallback(async () => {
-    // ── Ownership guard ───────────────────────────────────────────────────────
+    //  Ownership guard
     if (checkIsOwnListing(data)) {
       const msg = OWN_LISTING_MESSAGES[selectedType];
       addLog(`Blocked: ${msg}`, "err");
@@ -148,7 +148,7 @@ export function useBooking() {
     setError(null);
 
     try {
-      // ── Step 1: Create booking record ─────────────────────────────────────
+      //  Step 1: Create booking record
       const { bookingId, bookingReference, requiresPayment } =
         await submitBooking({
           selectedType,
@@ -158,7 +158,7 @@ export function useBooking() {
         });
       addLog(`201 Created — ${bookingReference}`, "success");
 
-      // ── Step 1.5: Send optional guest message to host inbox ───────────────
+      //  Step 1.5: Send optional guest message to host inbox
       const guestMessage = form.guestMessage?.trim();
       if (guestMessage && bookingId) {
         try {
@@ -170,7 +170,7 @@ export function useBooking() {
         }
       }
 
-      // ── Mock path ─────────────────────────────────────────────────────────
+      //  Mock path
       if (!requiresPayment) {
         setModal({
           bookingId: bookingReference,
@@ -180,7 +180,7 @@ export function useBooking() {
         return;
       }
 
-      // ── Step 2: Create Stripe checkout session and redirect ───────────────
+      //  Step 2: Create Stripe checkout session and redirect
       addLog(`POST /payments/create-checkout-session...`, "info");
       const { sessionUrl } = await createCheckoutSession(bookingId);
       addLog(`Stripe session ready — redirecting...`, "success");
@@ -194,7 +194,7 @@ export function useBooking() {
           "These dates are already booked. Please choose different dates and try again.";
         addLog(`409 Conflict — dates unavailable`, "err");
         setError(msg);
-        // ── Toast notification ──────────────────────────────────────────────
+        //  Toast notification
         toast.error("📅 Dates unavailable — already booked by someone else.", {
           duration: 5000,
           style: {

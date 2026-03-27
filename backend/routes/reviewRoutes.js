@@ -14,7 +14,7 @@ import { successResponse } from "../utils/responseUtils.js";
 
 const router = express.Router();
 
-// ─── PUBLIC ROUTES ──────────────────────────────────────────────────────────
+//  PUBLIC ROUTES
 
 /**
  * GET /api/reviews/:targetType/:targetId
@@ -22,7 +22,7 @@ const router = express.Router();
  */
 router.get("/:targetType/:targetId", getReviews);
 
-// ─── GUEST ROUTES ───────────────────────────────────────────────────────────
+//  GUEST ROUTES
 
 /**
  * POST /api/reviews
@@ -42,7 +42,7 @@ router.patch("/:id", protect, updateReview);
  */
 router.delete("/:id", protect, deleteReview);
 
-// ─── HOST & MODERATION ROUTES ───────────────────────────────────────────────
+//  HOST & MODERATION ROUTES
 
 /**
  * POST /api/reviews/:id/respond

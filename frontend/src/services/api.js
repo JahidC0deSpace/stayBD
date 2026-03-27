@@ -7,7 +7,7 @@ const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || "http://localhost:5000/api",
 });
 
-// ─── REQUEST INTERCEPTOR (Firebase Auth) ───────────────────────────────
+//  REQUEST INTERCEPTOR (Firebase Auth)
 api.interceptors.request.use(
   async (config) => {
     const user = auth.currentUser;
@@ -20,7 +20,7 @@ api.interceptors.request.use(
   (error) => Promise.reject(error),
 );
 
-// ─── RESPONSE INTERCEPTOR (Auto Logout) ────────────────────────────────
+//  RESPONSE INTERCEPTOR (Auto Logout)
 api.interceptors.response.use(
   (response) => response,
   (error) => {
@@ -38,7 +38,7 @@ api.interceptors.response.use(
   },
 );
 
-// ─── PROPERTY API ──────────────────────────────────────────────────────
+//  PROPERTY API
 export const propertyAPI = {
   getAll: (params) => api.get("/properties", { params }),
   getById: (id) => api.get(`/properties/${id}`),
@@ -53,7 +53,7 @@ export const propertyAPI = {
     }),
 };
 
-// ─── SERVICE & EXPERIENCE API (For Search) ──────────────────────────────
+//  SERVICE & EXPERIENCE API (For Search)
 export const serviceAPI = {
   getAll: (params) =>
     api.get("/search", { params: { ...params, type: "services" } }),
@@ -81,7 +81,7 @@ export const experienceAPI = {
   book: (id, data) => api.post(`/experiences/${id}/book`, data),
 };
 
-// ─── SEARCH & RECOMMENDATIONS ──────────────────────────────────────────
+//  SEARCH & RECOMMENDATIONS
 export const feedAPI = {
   getRecommendations: () => api.get("/search/recommendations"),
   getDistricts: () => api.get("/search/districts"),
@@ -90,7 +90,7 @@ export const searchAPI = {
   recommendations: (params) => api.get("/search/recommendations", { params }),
 };
 
-// ─── BOOKING API ───────────────────────────────────────────────────────
+//  BOOKING API
 export const bookingAPI = {
   bookProperty: (data) => api.post("/bookings/property", data),
   getUserBookings: (params) => api.get("/bookings/my-bookings", { params }),
@@ -103,7 +103,7 @@ export const bookingAPI = {
     api.get(`/bookings/${propertyId}/review-eligibility`),
 };
 
-// ─── ANALYTICS API (Fixes your SyntaxError) ───────────────────────────
+//  ANALYTICS API
 export const analyticsAPI = {
   getOverview: () => api.get("/search/districts"), // Or your specific analytics endpoint
   getAdminStats: () => api.get("/analytics/admin/overview"),
@@ -113,7 +113,7 @@ export const analyticsAPI = {
   getProviderStats: () => api.get("/analytics/provider/overview"),
 };
 
-// ─── ADMIN API ─────────────────────────────────────────────────────────
+//  ADMIN API
 export const adminAPI = {
   // Properties
   getProperties: (params) => api.get("/admin/properties", { params }),
@@ -156,7 +156,7 @@ export const adminAPI = {
     api.patch(`/experiences/${id}/deletion-request`, payload),
 };
 
-// ─── HOST API ─────────────────────────────────────────────────────────
+//  HOST API
 export const hostAPI = {
   getOverview: () => api.get("/analytics/host/overview"),
   getRevenue: () => api.get("/analytics/host/revenue"),
@@ -166,21 +166,21 @@ export const hostAPI = {
   deleteListing: (id) => api.delete(`/properties/${id}`),
 };
 
-// ─── PROVIDER API ─────────────────────
+//  PROVIDER API
 export const providerAPI = {
   getMyServices: (params) =>
     api.get("/services/provider/my-services", { params }),
   deleteService: (id) => api.delete(`/services/${id}`),
 };
 
-// ─── USER API ─────────────────────────────────────────────────────────
+//  USER API
 export const userAPI = {
   getMe: () => api.get("/users/me"),
   updateMe: (data) => api.patch("/users/updateMe", data),
   toggleWishlist: (itemId) => api.post(`/users/wishlist/${itemId}`),
 };
 
-// ─── REVIEW API ─────────────────────────────────────────────────────────
+//  REVIEW API
 export const reviewAPI = {
   // Fetch reviews for a specific property, service, or experience
   getByTarget: (targetType, targetId, params) =>
@@ -202,7 +202,7 @@ export const reviewAPI = {
   flag: (id, reason) => api.patch(`/reviews/${id}/flag`, { reason }),
 };
 
-// ─── BOOKING PAGE HELPERS ──────────────────────────────────────────────────────
+//  BOOKING PAGE HELPERS
 export async function fetchService(type, id) {
   const endpointMap = {
     property: `/properties/${id}`,

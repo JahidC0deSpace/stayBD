@@ -13,15 +13,15 @@ import { protect, restrictToAdmin } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-// ─── GLOBAL: all analytics routes require a valid login ────────────────
+//  GLOBAL: all analytics routes require a valid login
 router.use(protect);
 
-// ─── ADMIN ROUTES ──────────────────────────────────────────────────────
+//  ADMIN ROUTES
 router.get("/admin/overview", restrictToAdmin, getAdminOverview);
 router.get("/admin/revenue", restrictToAdmin, getAdminRevenue);
 router.get("/admin/bookings", restrictToAdmin, getAdminBookingStats);
 
-// ─── HOST ROUTES ───────────────────────────────────────────────────────
+//  HOST ROUTES
 // requireApproval removed — it was causing 403/404 for hosts whose
 // isApproved flag wasn't set yet even though they can see their dashboard.
 // Role check is enforced in the frontend via ProtectedRoute allowedRoles.

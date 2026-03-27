@@ -10,24 +10,20 @@ import { useWishlistStore } from "./useWishlistStore";
 export const useAuthStore = create(
   persist(
     (set, get) => ({
-      // ── State ────────────────────────────────────────────────────────────────
+      //  State
       user: null,
       token: null,
       isAuthenticated: false,
-      isAuthLoading: true, // true on first load until Firebase resolves
+      isAuthLoading: true,
       isHydrated: false,
 
-      // ── Internal: called once on app boot ────────────────────────────────────
-      // Returns the unsubscribe function so App.jsx can clean up.
       initAuth: () => {
         const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
           if (firebaseUser) {
             try {
-              // 1. Get a fresh token and attach it globally
               const token = await firebaseUser.getIdToken();
               api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
-              // 2. Pull the latest MongoDB user document
               const res = await api.get(`/users/${firebaseUser.uid}`);
               const mongoUser = res.data;
 
@@ -38,9 +34,6 @@ export const useAuthStore = create(
                 isAuthLoading: false,
               });
             } catch (err) {
-              // Firebase session exists but Mongo fetch failed (e.g. 404 on
-              // interrupted registration). Keep the user logged-out so that
-              // role checks don't crash on undefined.
               console.error(
                 "Failed to fetch user profile on refresh:",
                 err.message,
@@ -67,7 +60,6 @@ export const useAuthStore = create(
         return unsubscribe;
       },
 
-      // ── Called after registration / social login to sync with MongoDB ────────
       syncWithMongo: async (firebaseUser, additionalData = {}) => {
         try {
           const token = await firebaseUser.getIdToken();
@@ -108,7 +100,7 @@ export const useAuthStore = create(
         }
       },
 
-      // ── Manual login (used after email/password sign-in if needed) ───────────
+      //  Manual login (used after email/password sign-in if needed)
       login: (userData, token) => {
         api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
         set({
@@ -119,13 +111,13 @@ export const useAuthStore = create(
         });
       },
 
-      // ── Logout ───────────────────────────────────────────────────────────────
+      //  Logout
       logout: async () => {
         await signOut(auth);
         delete api.defaults.headers.common["Authorization"];
         localStorage.removeItem("staybd-auth");
         useChatStore.getState().disconnectAll();
-        useWishlistStore.getState().clear(); // ← ADD THIS LINE
+        useWishlistStore.getState().clear();
         set({
           user: null,
           token: null,
@@ -134,13 +126,13 @@ export const useAuthStore = create(
         });
       },
 
-      // ── Update user in store (e.g. after profile edit) ───────────────────────
+      //  Update user in store (e.g. after profile edit)
       updateUser: (updates) =>
         set((state) => ({
           user: state.user ? { ...state.user, ...updates } : null,
         })),
 
-      // ── Internal flags ───────────────────────────────────────────────────────
+      //  Internal flags
       setAuthLoading: (status) => set({ isAuthLoading: status }),
       setHydrated: () => set({ isHydrated: true }),
     }),

@@ -35,7 +35,7 @@ router.patch("/users/:id/ban", banUser);
 router.patch("/users/:id/role", changeUserRole);
 router.put("/users/:id", updateUserFull);
 
-// ─── PROPERTY & SERVICE ROUTES ────────────────────────────────────────────
+//  PROPERTY & SERVICE ROUTES
 router.get("/properties", getAdminProperties);
 router.patch("/properties/:id/approve", approveProperty);
 router.patch("/properties/:id/review-changes", reviewChanges); // Uncomment when ready
@@ -65,9 +65,9 @@ router.delete(
   adminDeleteExperience,
 );
 
-// ─── BOOKING & ANALYTICS ROUTES ───────────────────────────────────────────
+//  BOOKING & ANALYTICS ROUTES
 router.get("/bookings", getAdminBookings);
 router.get("/all-bookings", getAllBookings);
-// router.get("/analytics", getAnalytics); // Uncomment when analytics service is built
+// router.get("/analytics", getAnalytics);
 
 export default router;

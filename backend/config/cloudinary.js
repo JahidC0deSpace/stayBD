@@ -86,7 +86,7 @@ export const deleteFromCloudinary = async (publicId) => {
 };
 
 /**
- * FIXED: Added missing export for deleteMultipleFromCloudinary
+ * Function to deleteMultipleFromCloudinary
  */
 export const deleteMultipleFromCloudinary = async (publicIds) => {
   if (!publicIds || publicIds.length === 0) return null;

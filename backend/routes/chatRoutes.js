@@ -9,11 +9,11 @@ import {
 
 const router = express.Router();
 
-// ─── CONVERSATION LIST ─────────────────────────────────────────────────────
+//  CONVERSATION LIST
 // Fetch all active bookings/conversations for the current user
 router.get("/conversations", protect, getConversations);
 
-// ─── MESSAGE MANAGEMENT ────────────────────────────────────────────────────
+//  MESSAGE MANAGEMENT
 
 /**
  * GET /api/chat/:bookingId/messages

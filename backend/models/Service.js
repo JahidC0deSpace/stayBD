@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import { BANGLADESH_DISTRICTS, DIVISIONS } from "./User.js";
 
-// ─── Slot sub-schema (enforces HH:MM format) ──────────────────────────────────
+//  Slot sub-schema (enforces HH:MM format)
 const timeRegex = /^([01]\d|2[0-3]):([0-5]\d)$/;
 
 const slotSchema = new mongoose.Schema(
@@ -26,7 +26,7 @@ const slotSchema = new mongoose.Schema(
   { _id: false },
 );
 
-// ─── Day availability sub-schema (reused for each weekday) ───────────────────
+//  Day availability sub-schema
 const daySchema = new mongoose.Schema(
   {
     available: { type: Boolean, default: true },
@@ -35,7 +35,7 @@ const daySchema = new mongoose.Schema(
   { _id: false },
 );
 
-// ─── Certification sub-schema ─────────────────────────────────────────────────
+//  Certification sub-schema
 const certificationSchema = new mongoose.Schema(
   {
     name: { type: String, required: true, trim: true },
@@ -46,7 +46,7 @@ const certificationSchema = new mongoose.Schema(
   { _id: false },
 );
 
-// ─── Image sub-schema ─────────────────────────────────────────────────────────
+//  Image sub-schema
 const imageSchema = new mongoose.Schema(
   {
     url: { type: String, required: true },
@@ -55,10 +55,10 @@ const imageSchema = new mongoose.Schema(
   { _id: false },
 );
 
-// ─── Main schema ──────────────────────────────────────────────────────────────
+//  Main schema
 const serviceSchema = new mongoose.Schema(
   {
-    // ── Ownership ──────────────────────────────────────────────────────────
+    //  Ownership
     provider: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
@@ -66,7 +66,7 @@ const serviceSchema = new mongoose.Schema(
       index: true,
     },
 
-    // ── Service info ───────────────────────────────────────────────────────
+    //  Service info
     title: {
       type: String,
       required: [true, "Service title is required"],
@@ -109,29 +109,28 @@ const serviceSchema = new mongoose.Schema(
       index: true,
     },
 
-    // ── Pricing ────────────────────────────────────────────────────────────
+    //  Pricing
     pricePerHour: {
       type: Number,
       required: [true, "Hourly price is required"],
       min: [1, "Price must be at least 1"],
     },
     minimumHours: { type: Number, default: 1, min: 1 },
-    // FIX: currency is now enum-guarded so it can never drift from BDT accidentally
     currency: {
       type: String,
       enum: ["BDT"],
       default: "BDT",
     },
 
-    // ── Service area ───────────────────────────────────────────────────────
+    //  Service area
     serviceArea: {
       divisions: [{ type: String, enum: DIVISIONS }],
       districts: [{ type: String, enum: BANGLADESH_DISTRICTS }],
       areas: [{ type: String, trim: true }],
     },
 
-    // ── Images (max 10) ────────────────────────────────────────────────────
-    // FIX: added a max-10 validator; previously unbounded
+    //  Images (max 10)
+
     images: {
       type: [imageSchema],
       default: [],
@@ -141,8 +140,7 @@ const serviceSchema = new mongoose.Schema(
       },
     },
 
-    // ── Availability (weekly template) ─────────────────────────────────────
-    // FIX: typed sub-schemas replace bare objects so slot times are validated
+    //  Availability (weekly template)
     availability: {
       monday: {
         type: daySchema,
@@ -174,7 +172,7 @@ const serviceSchema = new mongoose.Schema(
       },
     },
 
-    // ── Skills & tags ──────────────────────────────────────────────────────
+    //  Skills & tags
     skills: [{ type: String, trim: true }],
     languages: [{ type: String, trim: true }],
     experience: {
@@ -182,32 +180,31 @@ const serviceSchema = new mongoose.Schema(
       description: { type: String, default: "", trim: true },
     },
 
-    // ── Approval lifecycle ─────────────────────────────────────────────────
+    //  Approval lifecycle
     status: {
       type: String,
       enum: ["pending", "approved", "rejected", "archived"],
       default: "pending",
     },
     approvedAt: Date,
-    // FIX: approvedBy is intentionally admin-only; application layer must enforce this
     approvedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     rejectionReason: { type: String, default: "", trim: true },
 
-    // ── Pending changes (edit-approval workflow) ───────────────────────────
-    // FIX: replaced bare Mixed with a wrapper object so markModified() is explicit
+    //  Pending changes (edit-approval workflow)
+
     pendingChanges: {
       type: mongoose.Schema.Types.Mixed,
       default: null,
     },
     hasPendingChanges: { type: Boolean, default: false },
 
-    // ── Analytics (denormalised — keep in sync via review hooks) ──────────
+    //  Analytics (denormalised — keep in sync via review hooks)
     totalBookings: { type: Number, default: 0, min: 0 },
     totalReviews: { type: Number, default: 0, min: 0 },
     averageRating: { type: Number, default: 0, min: 0, max: 5 },
 
-    // ── Certifications (max 5) ─────────────────────────────────────────────
-    // FIX: added a max-5 validator; previously unbounded
+    //  Certifications (max 5)
+
     certifications: {
       type: [certificationSchema],
       default: [],
@@ -217,9 +214,9 @@ const serviceSchema = new mongoose.Schema(
       },
     },
 
-    // ── Soft delete ────────────────────────────────────────────────────────
+    //  Soft delete
     deletionRequested: { type: Boolean, default: false },
-    // FIX: added timestamp so admin/cron can know when deletion was requested
+
     deletionRequestedAt: { type: Date, default: null },
     isActive: { type: Boolean, default: true },
     deletedAt: { type: Date, default: null },
@@ -231,9 +228,8 @@ const serviceSchema = new mongoose.Schema(
   },
 );
 
-// ─── Indexes ──────────────────────────────────────────────────────────────────
-// FIX: removed redundant single-field indexes on status and category — the
-//      compound index below already covers queries leading with status or category.
+//  Indexes
+
 serviceSchema.index({ status: 1, category: 1 }); // most common filter
 serviceSchema.index({ provider: 1, status: 1 }); // FIX: added — "my approved services"
 serviceSchema.index({ "serviceArea.districts": 1 });
@@ -242,7 +238,7 @@ serviceSchema.index({ pricePerHour: 1 });
 serviceSchema.index({ isActive: 1 }); // FIX: added — soft-delete queries
 serviceSchema.index({ deletedAt: 1 }, { sparse: true }); // FIX: added — cron cleanup queries
 
-// ─── Helper: call this whenever you mutate pendingChanges directly ────────────
+//  Helper: call this whenever you mutate pendingChanges directly
 serviceSchema.methods.setPendingChanges = function (changes) {
   this.pendingChanges = changes;
   this.hasPendingChanges = changes !== null;

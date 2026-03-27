@@ -6,7 +6,6 @@ import { Booking } from "../models/Booking.js";
 
 let io = null;
 
-// Map: userId -> Set of socketIds (handles multiple device connections)
 const userSocketMap = new Map();
 
 export const initializeSocketIO = (server) => {
@@ -20,7 +19,7 @@ export const initializeSocketIO = (server) => {
     pingInterval: 25000,
   });
 
-  // ─── AUTHENTICATION MIDDLEWARE ──────────────────────────────────────────
+  //  AUTHENTICATION MIDDLEWARE
   io.use(async (socket, next) => {
     try {
       const token = socket.handshake.auth?.token;
@@ -40,12 +39,11 @@ export const initializeSocketIO = (server) => {
     }
   });
 
-  // ─── CONNECTION HANDLER ──────────────────────────────────────────────────
+  //  CONNECTION HANDLER
   io.on("connection", (socket) => {
     const userId = socket.user._id.toString();
     // console.log(`🔌 Socket connected: ${userId}`);
 
-    // Track user socket connections
     if (!userSocketMap.has(userId)) {
       userSocketMap.set(userId, new Set());
     }
@@ -54,24 +52,21 @@ export const initializeSocketIO = (server) => {
     // Broadcast online status
     socket.broadcast.emit("user:online", { userId });
 
-    // ─── JOIN A CHAT ROOM ───────────────────────────────────────────────
+    //  JOIN A CHAT ROOM
     socket.on("chat:join", async ({ bookingId }) => {
       const room = `booking:${bookingId}`;
       socket.join(room);
       // console.log(`User ${userId} joined room ${room}`);
 
-      // Optional: Auto-mark messages as read when joining the room
       await Message.updateMany(
         { booking: bookingId, receiver: userId, isRead: false },
         { $set: { isRead: true, readAt: new Date() } },
       );
     });
 
-    // ─── SEND MESSAGE ────────────────────────────────────────────────────
+    //  SEND MESSAGE
     socket.on("chat:message", async (data) => {
       try {
-        // Extract the data sent from the frontend.
-        // Note: The frontend must send the FULL saved message object here!
         const {
           bookingId,
           text,
@@ -85,7 +80,6 @@ export const initializeSocketIO = (server) => {
         if (!text?.trim() && (!attachments || attachments.length === 0)) return;
         socket.broadcast.to(`booking:${bookingId}`).emit("chat:message", data);
 
-        // 2. We still need to find the booking to send the push notification
         const booking = await Booking.findById(bookingId).select(
           "guest host provider",
         );
@@ -97,11 +91,6 @@ export const initializeSocketIO = (server) => {
           userId === booking.guest.toString()
             ? booking.host || booking.provider
             : booking.guest;
-
-        // 🚨 3. REMOVED `Message.create()` and `message.populate()` HERE 🚨
-        // The frontend's `api.post` already saved the message to MongoDB!
-
-        // 4. Send the notification to the receiver if they are offline
         emitToUser(receiverId, "notification:message", {
           bookingId,
           senderName: socket.user.name,
@@ -112,7 +101,7 @@ export const initializeSocketIO = (server) => {
       }
     });
 
-    // ─── TYPING INDICATOR ────────────────────────────────────────────────
+    //  TYPING INDICATOR
     socket.on("chat:typing", ({ bookingId, isTyping }) => {
       socket.to(`booking:${bookingId}`).emit("chat:typing", {
         userId,
@@ -120,7 +109,7 @@ export const initializeSocketIO = (server) => {
       });
     });
 
-    // ─── DISCONNECT ──────────────────────────────────────────────────────
+    //  DISCONNECT
     socket.on("disconnect", () => {
       const userSockets = userSocketMap.get(userId);
       if (userSockets) {

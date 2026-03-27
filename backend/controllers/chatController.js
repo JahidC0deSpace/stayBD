@@ -49,7 +49,7 @@ export const getMessages = asyncHandler(async (req, res) => {
 
 /**
  * POST /api/chat/:bookingId/messages
- * REST Fallback for sending messages (Primary is usually Socket.io)
+ * REST Fallback for sending messages
  */
 export const sendMessage = asyncHandler(async (req, res) => {
   const { bookingId } = req.params;

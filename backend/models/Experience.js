@@ -10,7 +10,7 @@ const scheduleSlotSchema = new mongoose.Schema(
     currentParticipants: { type: Number, default: 0 },
     isFull: { type: Boolean, default: false }, // Renamed for clearer logic
     bookingIds: [
-      // Changed to an array to allow multiple distinct bookings per slot
+      // Array of booking IDs
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Booking",
@@ -22,7 +22,7 @@ const scheduleSlotSchema = new mongoose.Schema(
 
 const experienceSchema = new mongoose.Schema(
   {
-    // ─── Ownership ─────────────────────────────────────────────────────────
+    //  Ownership
     host: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
@@ -30,7 +30,7 @@ const experienceSchema = new mongoose.Schema(
       index: true,
     },
 
-    // ─── Basic Info ────────────────────────────────────────────────────────
+    //  Basic Info
     title: {
       type: String,
       required: [true, "Experience title is required"],
@@ -68,7 +68,7 @@ const experienceSchema = new mongoose.Schema(
       index: true,
     },
 
-    // ─── Duration & Pricing ────────────────────────────────────────────────
+    //  Duration & Pricing
     durationHours: {
       type: Number,
       required: true,
@@ -88,7 +88,7 @@ const experienceSchema = new mongoose.Schema(
       max: [100, "Maximum 100 participants"],
     },
 
-    // ─── Location ──────────────────────────────────────────────────────────
+    //  Location
     location: {
       division: { type: String, enum: DIVISIONS, required: true },
       district: { type: String, enum: BANGLADESH_DISTRICTS, required: true },
@@ -101,7 +101,7 @@ const experienceSchema = new mongoose.Schema(
       },
     },
 
-    // ─── Media ─────────────────────────────────────────────────────────────
+    //  Media
     images: [
       {
         url: { type: String, required: true },
@@ -109,16 +109,16 @@ const experienceSchema = new mongoose.Schema(
       },
     ],
 
-    // ─── Schedule ──────────────────────────────────────────────────────────
+    //  Schedule
     schedule: [scheduleSlotSchema],
 
-    // ─── Logistics ─────────────────────────────────────────────────────────
+    //  Logistics
     includes: [{ type: String, trim: true }],
     excludes: [{ type: String, trim: true }],
     requirements: [{ type: String, trim: true }],
     languages: { type: [String], default: ["Bengali", "English"] },
 
-    // ─── Status & Verification ─────────────────────────────────────────────
+    //  Status & Verification
     status: {
       type: String,
       enum: ["pending", "approved", "rejected", "archived"],
@@ -137,7 +137,7 @@ const experienceSchema = new mongoose.Schema(
       default: {},
     },
 
-    // ─── Metadata ──────────────────────────────────────────────────────────
+    //  Metadata
     totalBookings: { type: Number, default: 0 },
     totalReviews: { type: Number, default: 0 },
     averageRating: { type: Number, default: 0, min: 0, max: 5 },

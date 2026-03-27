@@ -18,7 +18,7 @@ import { uploadAvatar } from "../config/cloudinary.js";
 
 const router = express.Router();
 
-// ─── PUBLIC ROUTES ──────────────────────────────────────────────────────────
+//  PUBLIC ROUTES
 
 /**
  * GET /api/users/public/:id
@@ -26,7 +26,7 @@ const router = express.Router();
  */
 router.get("/public/:id", getUserById);
 
-// ─── FIREBASE AUTH SYNC ─────────────────────────────────────────────────────
+//  FIREBASE AUTH SYNC
 
 /**
  * POST /api/users/sync
@@ -87,7 +87,7 @@ router.post(
   }),
 );
 
-// ─── PROTECTED ROUTES (Requires Login) ──────────────────────────────────────
+//  PROTECTED ROUTES (Requires Login)
 
 router.use(protect); // Middleware to protect all routes below
 
