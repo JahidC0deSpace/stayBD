@@ -1,16 +1,301 @@
-# React + Vite
+# 🏡 StayBD — Full Stack Rental & Service Marketplace
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+<p align="center">
+  <b>A multi-role, full-stack platform inspired by modern booking systems like Airbnb — tailored for Bangladesh.</b>
+</p>
 
-Currently, two official plugins are available:
+<p align="center">
+  🚀 Properties • 🎯 Experiences • 🛠 Services • 💳 Payments • 💬 Real-time Chat • 📊 Analytics
+</p>
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## React Compiler
+## 📌 Overview
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+**StayBD** is a scalable full-stack web application that enables users to explore, book, and manage **properties, services, and experiences** in a unified platform.
 
-## Expanding the ESLint configuration
+Unlike basic CRUD apps, StayBD implements:
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- Multi-role system (Guest, Host, Provider, Admin)
+- Real-time communication
+- Payment processing
+- Modular backend architecture
+- Analytics dashboards
+
+---
+
+## ✨ Key Features
+
+### 👤 Role-Based System
+
+| Role                 | Capabilities                      |
+| -------------------- | --------------------------------- |
+| **Guest**            | Browse, book, chat, review        |
+| **Host**             | Manage properties, track bookings |
+| **Service Provider** | Offer services & experiences      |
+| **Admin**            | Manage platform & analytics       |
+
+---
+
+### 🧩 Core Functionalities
+
+- 🏠 Property listing & booking system
+- 🎯 Experience & service marketplace
+- 💬 Real-time chat (Socket.IO)
+- 💳 Stripe payment integration
+- 🗺️ Map-based search (Leaflet)
+- ⭐ Review & rating system
+- ❤️ Wishlist system
+- 📊 Role-based analytics dashboards
+- 🔐 Authentication & authorization system
+- 📦 Basic recommendation engine
+
+---
+
+## 🏗️ System Architecture
+
+```
+Frontend (React + Vite)
+        │
+        ▼
+API Layer (Express.js)
+        │
+ ┌──────┼────────┐
+ ▼      ▼        ▼
+DB   Services   Realtime
+(MongoDB) (Logic) (Socket.IO)
+```
+
+---
+
+## 🧠 Tech Stack
+
+### 🎨 Frontend
+
+- React (Vite)
+- Tailwind CSS
+- Zustand (State Management)
+- React Router
+- Axios
+- Leaflet (Maps)
+- Socket.IO Client
+- Stripe.js
+
+---
+
+### ⚙️ Backend
+
+- Node.js + Express
+- MongoDB + Mongoose
+- Firebase Admin SDK
+- Cloudinary (Image Upload)
+- Stripe API
+- Socket.IO
+- Express Validator
+- Helmet, Rate Limiting
+
+---
+
+## 📁 Project Structure
+
+```
+StayBD/
+│
+├── backend/
+│   ├── config/
+│   ├── controllers/
+│   ├── services/
+│   ├── models/
+│   ├── routes/
+│   ├── middleware/
+│   ├── utils/
+│   ├── seeds/
+│   └── server.js
+│
+├── frontend/
+│   ├── src/
+│   │   ├── components/
+│   │   ├── pages/
+│   │   ├── store/
+│   │   ├── services/
+│   │   └── utils/
+│   └── index.html
+│
+└── README.md
+```
+
+---
+
+## ⚙️ Setup Instructions
+
+### 🔽 Clone Repository
+
+```bash
+git clone https://github.com/your-username/staybd.git
+cd staybd
+```
+
+---
+
+## 🔐 Environment Variables
+
+### 🌐 Frontend (`frontend/.env`)
+
+```env
+# Firebase (Client)
+VITE_FIREBASE_API_KEY=********
+VITE_FIREBASE_AUTH_DOMAIN=********
+VITE_FIREBASE_PROJECT_ID=********
+VITE_FIREBASE_STORAGE_BUCKET=********
+VITE_FIREBASE_MESSAGING_SENDER_ID=********
+VITE_FIREBASE_APP_ID=********
+
+# API
+VITE_API_URL=http://localhost:5000/api
+
+# Stripe
+VITE_STRIPE_PUBLISHABLE_KEY=********
+```
+
+---
+
+### ⚙️ Backend (`backend/.env`)
+
+```env
+# Server
+NODE_ENV=development
+PORT=5000
+
+# Database
+MONGODB_URI=********
+DB_NAME=********
+
+# Frontend
+FRONTEND_URL=http://localhost:5173
+
+# Auth
+JWT_SECRET=********
+
+# Firebase Admin
+FIREBASE_PROJECT_ID=********
+FIREBASE_PRIVATE_KEY_ID=********
+FIREBASE_PRIVATE_KEY="********"
+FIREBASE_CLIENT_EMAIL=********
+FIREBASE_CLIENT_ID=********
+
+# Stripe
+STRIPE_SECRET_KEY=********
+STRIPE_WEBHOOK_SECRET=********
+
+# Cloudinary
+CLOUDINARY_CLOUD_NAME=********
+CLOUDINARY_API_KEY=********
+CLOUDINARY_API_SECRET=********
+```
+
+---
+
+## ▶️ Run the Project
+
+### Backend
+
+```bash
+cd backend
+npm install
+npm run dev
+```
+
+---
+
+### Frontend
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+---
+
+## 🌱 Seed Database
+
+```bash
+cd backend
+npm run seed
+```
+
+---
+
+## 🔌 API Structure
+
+```
+/api/users
+/api/properties
+/api/bookings
+/api/services
+/api/experiences
+/api/reviews
+/api/payments
+/api/chat
+/api/admin
+/api/analytics
+```
+
+---
+
+## 💬 Real-Time System
+
+- Built with **Socket.IO**
+- Supports:
+  - Live chat
+  - Event-based communication
+  - Scalable socket handling via utility layer
+
+---
+
+## 🔐 Security Features
+
+- JWT Authentication
+- Role-based access control
+- Rate limiting
+- Input validation & sanitization
+- Secure headers (Helmet)
+
+---
+
+## 📊 Analytics
+
+- Booking trends
+- Revenue insights
+- Role-specific dashboards
+- User activity tracking
+
+---
+
+## ⚠️ Limitations
+
+- Recommendation system is rule-based (not ML-driven)
+- No automated testing implemented yet
+- Stripe in test mode
+
+---
+
+## 🚀 Future Improvements
+
+- AI-based recommendation engine
+- Advanced filtering & search
+- Microservices architecture
+- Mobile app version
+
+---
+
+## 👨‍💻 Author
+
+**Md. Jahid Hasan Jitu**
+CSE — Green University of Bangladesh
+
+---
+
+## 📄 License
+
+ISC License
