@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 if (!process.env.FIREBASE_PRIVATE_KEY) {
-  console.error("❌ ERROR: FIREBASE_PRIVATE_KEY is missing in .env file!");
+  console.error("ERROR: FIREBASE_PRIVATE_KEY is missing in .env file!");
 }
 
 if (!admin.apps.length && process.env.FIREBASE_PRIVATE_KEY) {
