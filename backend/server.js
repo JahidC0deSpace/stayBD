@@ -58,6 +58,6 @@ app.use(errorHandler);
 // Connect to DB then start the HTTP Server (not the app)
 connectDB().then(() => {
   httpServer.listen(PORT, () => {
-    console.log(`🚀 Server & Socket.io running on port: ${PORT}`);
+    console.log(`Server & Socket.io running on port: ${PORT}`);
   });
 });
