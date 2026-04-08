@@ -43,6 +43,9 @@ const StarRating = ({ rating, max = 5 }) => (
   </div>
 );
 
+const FALLBACK_IMAGE =
+  "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&auto=format&fit=crop";
+
 export default function PropertyDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -81,22 +84,22 @@ export default function PropertyDetailPage() {
   const [showReviewForm, setShowReviewForm] = useState(false);
 
   // ── Effects ──────────────────────────────────────────────────────────────
-  // In the useEffect:
   useEffect(() => {
     if (id) {
-      resetForm(); // ← clears leftover rating/comment from prior visit
+      resetForm();
       loadReviews();
       loadSimilar();
       setCheckIn(null);
       setCheckOut(null);
       setGuests(1);
+      setActiveImg(0);
     }
   }, [id]);
 
-  // Separate effect so eligibility re-fires if user logs in mid-session
   useEffect(() => {
     if (id && user) loadEligibility();
   }, [id, user]);
+
   // ── Data Loaders ─────────────────────────────────────────────────────────
   const loadReviews = async () => {
     try {
@@ -158,7 +161,6 @@ export default function PropertyDetailPage() {
     setEligibility({ isEligible: false, bookingId: null });
     loadReviews();
   };
-  // replace the two useState-less buttons with this:
 
   const handleShare = async () => {
     try {
@@ -189,6 +191,18 @@ export default function PropertyDetailPage() {
       toast.error("Something went wrong");
     }
   };
+
+  // ── Image navigation ──────────────────────────────────────────────────────
+  const handlePrevImage = () => {
+    if (images.length < 2) return;
+    setActiveImg((i) => (i - 1 + images.length) % images.length);
+  };
+
+  const handleNextImage = () => {
+    if (images.length < 2) return;
+    setActiveImg((i) => (i + 1) % images.length);
+  };
+
   // ── Render Guards ─────────────────────────────────────────────────────────
   if (loading)
     return (
@@ -217,6 +231,8 @@ export default function PropertyDetailPage() {
     );
 
   const images = property.images || [];
+  const imgCount = images.length;
+  const currentImage = images[activeImg]?.url ?? FALLBACK_IMAGE;
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-fadeIn">
@@ -283,45 +299,73 @@ export default function PropertyDetailPage() {
         </div>
       </div>
 
-      {/* Image Gallery */}
-      <div className="relative mb-12 rounded-2xl overflow-hidden bg-gray-100 h-[40vh] md:h-[60vh] shadow-sm group">
-        {images.length > 0 ? (
-          <img
-            src={images[activeImg]?.url}
-            alt={property.title}
-            className="w-full h-full object-cover transition-transform duration-500"
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center text-6xl text-gray-300 bg-gray-50">
-            🏠
-          </div>
-        )}
-        {images.length > 1 && (
-          <>
-            <button
-              onClick={() =>
-                setActiveImg((i) => (i - 1 + images.length) % images.length)
-              }
-              className="absolute left-4 top-1/2 -translate-y-1/2 p-3 bg-white/90 text-gray-800 rounded-full shadow-lg hover:bg-white hover:scale-105 transition opacity-0 group-hover:opacity-100"
-            >
-              <FiChevronLeft size={20} />
-            </button>
-            <button
-              onClick={() => setActiveImg((i) => (i + 1) % images.length)}
-              className="absolute right-4 top-1/2 -translate-y-1/2 p-3 bg-white/90 text-gray-800 rounded-full shadow-lg hover:bg-white hover:scale-105 transition opacity-0 group-hover:opacity-100"
-            >
-              <FiChevronRight size={20} />
-            </button>
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 bg-black/20 px-3 py-2 rounded-full backdrop-blur-sm">
-              {images.map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => setActiveImg(i)}
-                  className={`h-2 rounded-full transition-all duration-300 ${i === activeImg ? "bg-white w-6" : "bg-white/60 w-2 hover:bg-white/80"}`}
-                />
-              ))}
+      {/* ── Image Gallery ── */}
+      <div className="space-y-4 mb-12">
+        {/* Main image */}
+        <div className="relative group bg-white rounded-2xl overflow-hidden shadow-sm border h-[40vh] md:h-[60vh]">
+          {imgCount > 0 ? (
+            <img
+              src={currentImage}
+              alt={property.title}
+              className="w-full h-full object-cover transition-all duration-500"
+              onError={(e) => {
+                e.currentTarget.src = FALLBACK_IMAGE;
+              }}
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center text-6xl text-gray-300 bg-gray-50">
+              🏠
             </div>
-          </>
+          )}
+
+          {imgCount > 1 && (
+            <>
+              <button
+                onClick={handlePrevImage}
+                aria-label="Previous image"
+                className="absolute left-4 top-1/2 -translate-y-1/2 p-3 bg-white/90 text-gray-800 rounded-full shadow-lg hover:bg-white hover:scale-105 transition opacity-0 group-hover:opacity-100 focus:opacity-100"
+              >
+                <FiChevronLeft size={20} />
+              </button>
+              <button
+                onClick={handleNextImage}
+                aria-label="Next image"
+                className="absolute right-4 top-1/2 -translate-y-1/2 p-3 bg-white/90 text-gray-800 rounded-full shadow-lg hover:bg-white hover:scale-105 transition opacity-0 group-hover:opacity-100 focus:opacity-100"
+              >
+                <FiChevronRight size={20} />
+              </button>
+              <div className="absolute bottom-4 right-4 bg-black/50 backdrop-blur-md text-white px-3 py-1 rounded-full text-xs font-medium">
+                {activeImg + 1} / {imgCount}
+              </div>
+            </>
+          )}
+        </div>
+
+        {/* Thumbnail strip */}
+        {imgCount > 1 && (
+          <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+            {images.map((img, index) => (
+              <button
+                key={index}
+                onClick={() => setActiveImg(index)}
+                aria-label={`View image ${index + 1}`}
+                className={`relative flex-shrink-0 w-24 h-16 rounded-xl overflow-hidden border-2 transition-all ${
+                  activeImg === index
+                    ? "border-emerald-600 ring-2 ring-emerald-100 scale-105"
+                    : "border-transparent opacity-60 hover:opacity-100"
+                }`}
+              >
+                <img
+                  src={img.url ?? FALLBACK_IMAGE}
+                  alt={`Thumbnail ${index + 1}`}
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    e.currentTarget.src = FALLBACK_IMAGE;
+                  }}
+                />
+              </button>
+            ))}
+          </div>
         )}
       </div>
 

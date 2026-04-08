@@ -25,6 +25,14 @@ const safeNum = (val, fallback = 0) => {
   return isFinite(n) ? n : fallback;
 };
 
+// ─── Past-date check ───────────────────────────────────────────────────────────
+const isDatePast = (dateValue) => {
+  if (!dateValue) return false;
+  const d =
+    typeof dateValue === "string" ? parseISO(dateValue) : new Date(dateValue);
+  return isValid(d) && d < new Date();
+};
+
 // ─── Fallbacks ────────────────────────────────────────────────────────────────
 const FALLBACK_IMAGE =
   "https://images.unsplash.com/photo-1533105079780-92b9be482077?w=800&auto=format&fit=crop";
@@ -221,6 +229,14 @@ export default function ExperienceDetailPage() {
   const duration = safeNum(experience?.durationHours);
   const currentImage = images[imgIdx]?.url ?? FALLBACK_IMAGE;
   const averageRating = safeNum(experience?.averageRating);
+
+  // ── Check if any slot is still bookable (not past, not full) ──────────────
+  const hasAvailableSlots = schedule.some((slot) => {
+    if (!slot) return false;
+    const slotMax = safeNum(slot.maxParticipants, maxPax);
+    const current = safeNum(slot.currentParticipants, 0);
+    return !isDatePast(slot.date) && current < slotMax;
+  });
 
   // ── Loading / not-found states ─────────────────────────────────────────────
   if (loading)
@@ -571,7 +587,7 @@ export default function ExperienceDetailPage() {
                 )}
               </div>
 
-              {/* Schedule preview — read-only, selection happens in BookingPage */}
+              {/* Schedule preview */}
               <div className="mb-6">
                 <label className="text-[10px] font-black text-gray-400 block mb-3 uppercase tracking-widest">
                   Available Schedules
@@ -588,11 +604,17 @@ export default function ExperienceDetailPage() {
                       const current = safeNum(slot.currentParticipants, 0);
                       const spotsLeft = Math.max(0, slotMax - current);
                       const isFull = spotsLeft <= 0;
+                      const isPast = isDatePast(slot.date);
+                      const isUnavailable = isFull || isPast;
 
                       return (
                         <div
                           key={i}
-                          className={`w-full text-left p-3 rounded-xl border-2 transition-all border-gray-100 ${isFull ? "opacity-50 grayscale" : "hover:border-violet-200"}`}
+                          className={`w-full text-left p-3 rounded-xl border-2 transition-all ${
+                            isUnavailable
+                              ? "opacity-50 grayscale border-gray-100"
+                              : "border-gray-100 hover:border-violet-200"
+                          }`}
                         >
                           <div className="font-bold text-gray-800">
                             {safeFormatDate(slot.date)}
@@ -603,10 +625,18 @@ export default function ExperienceDetailPage() {
                             </span>
                             <span
                               className={
-                                isFull ? "text-red-500" : "text-emerald-600"
+                                isPast
+                                  ? "text-gray-400"
+                                  : isFull
+                                    ? "text-red-500"
+                                    : "text-emerald-600"
                               }
                             >
-                              {isFull ? "Sold out" : `${spotsLeft} left`}
+                              {isPast
+                                ? "Expired"
+                                : isFull
+                                  ? "Sold out"
+                                  : `${spotsLeft} left`}
                             </span>
                           </div>
                         </div>
@@ -619,9 +649,14 @@ export default function ExperienceDetailPage() {
               {/* Reserve button */}
               <button
                 onClick={handleReserve}
-                className="w-full py-4 bg-violet-600 text-white font-bold rounded-2xl hover:bg-violet-700 transition-all shadow-lg shadow-violet-100"
+                disabled={!hasAvailableSlots}
+                className="w-full py-4 bg-violet-600 text-white font-bold rounded-2xl hover:bg-violet-700 transition-all shadow-lg shadow-violet-100 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-violet-600"
               >
-                {!user ? "Sign in to Book" : "Reserve Now"}
+                {!user
+                  ? "Sign in to Book"
+                  : !hasAvailableSlots
+                    ? "No Slots Available"
+                    : "Reserve Now"}
               </button>
 
               {!user && (
