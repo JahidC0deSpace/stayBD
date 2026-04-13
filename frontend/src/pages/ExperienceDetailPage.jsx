@@ -207,14 +207,14 @@ export default function ExperienceDetailPage() {
     }
   };
 
-  // ── FIX: hard server-side guard — re-validate before navigating ───────────
+  // re-validate before navigating ───────────
   const handleReserve = () => {
     if (!user) {
       toast.error("Please log in to book this experience");
       return navigate("/login");
     }
 
-    // Re-derive availability at click time to prevent stale-state bypass
+    // availability at click time to prevent stale-state bypass
     const schedule = Array.isArray(experience?.schedule)
       ? experience.schedule
       : [];
@@ -224,7 +224,7 @@ export default function ExperienceDetailPage() {
       if (!slot) return false;
       const slotMax = safeNum(slot.maxParticipants, maxPax);
       const current = safeNum(slot.currentParticipants, 0);
-      // ── FIX: explicitly reject past-dated slots here too ──
+      // ── reject past-dated slots here too ──
       return !isDatePast(slot.date) && current < slotMax;
     });
 
@@ -250,8 +250,6 @@ export default function ExperienceDetailPage() {
   const currentImage = images[imgIdx]?.url ?? FALLBACK_IMAGE;
   const averageRating = safeNum(experience?.averageRating);
 
-  // ── FIX: hasAvailableSlots now also rejects past-dated slots ─────────────
-  // (it already did via isDatePast, confirming it's consistent)
   const hasAvailableSlots = schedule.some((slot) => {
     if (!slot) return false;
     const slotMax = safeNum(slot.maxParticipants, maxPax);
@@ -686,7 +684,7 @@ export default function ExperienceDetailPage() {
                     to="/login"
                     className="text-violet-600 font-semibold hover:underline"
                   >
-                    Sign in
+                    Log in
                   </Link>{" "}
                   to complete your booking
                 </p>
