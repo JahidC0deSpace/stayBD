@@ -1,5 +1,5 @@
 import express from "express";
-import { User } from "../models/User.js"; // Standardized default import
+import { User } from "../models/User.js";
 import { asyncHandler, createError } from "../utils/errorUtils.js";
 import {
   getMe,
@@ -51,17 +51,14 @@ router.post(
       throw createError(403, "Unauthorized profile sync");
     }
 
-    // 1. Find the user first to check their status
     let user = await User.findOne({ firebaseUID: req.user.uid });
 
-    // 2. CHECK BAN STATUS (If user exists)
     if (user && user.isBanned) {
       return res.status(403).json({
         message: "This account is banned. Please use another email.",
       });
     }
 
-    // 3. Proceed with Update or Create (Upsert)
     const isGuest = role?.toLowerCase() === "guest";
     user = await User.findOneAndUpdate(
       { firebaseUID: req.user.uid },
@@ -69,13 +66,13 @@ router.post(
         $set: {
           firebaseUID: req.user.uid,
           email,
-          name,
-          phone,
-          address,
-          nationalIdNumber,
-          authProvider,
+          ...(phone && { phone }),
+          ...(address && { address }),
+          ...(nationalIdNumber && { nationalIdNumber }),
+          ...(authProvider && { authProvider }),
         },
         $setOnInsert: {
+          name,
           role: role ? role.toLowerCase() : "guest",
           isVerified: isGuest,
         },

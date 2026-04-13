@@ -22,7 +22,7 @@ export default function LoginPage() {
 
   const navigate = useNavigate();
   const location = useLocation();
-  const login = useAuthStore((state) => state.login); // ✅ Use Zustand Login Action
+  const login = useAuthStore((state) => state.login); // Use Zustand Login Action
 
   const handleEmailLogin = async (e) => {
     e.preventDefault();
@@ -60,7 +60,7 @@ export default function LoginPage() {
       const userData = await response.json();
 
       if (!response.ok) {
-        // 🚨 USER IS BANNED
+        // USER IS BANNED
         await signOut(auth); // Log them out of Firebase
         toast.error(userData.message || "Login failed");
         return;
@@ -82,17 +82,44 @@ export default function LoginPage() {
     try {
       const provider = new GoogleAuthProvider();
       const result = await signInWithPopup(auth, provider);
+
+      // Check if this is a NEW user (not registered)
+      const additionalInfo = getAdditionalUserInfo(result);
+      if (additionalInfo?.isNewUser) {
+        await deleteUser(result.user); // Remove from Firebase too
+        toast.error("No account found. Please register first.");
+        return;
+      }
+
       const token = await result.user.getIdToken();
 
-      const userData = {
-        uid: result.user.uid,
-        email: result.user.email,
-        name: result.user.displayName,
-        avatar: { url: result.user.photoURL },
-        role: "user",
-      };
+      // Also verify against MongoDB (in case they were deleted from DB but exist in Firebase)
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/users/sync`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            uid: result.user.uid,
+            email: result.user.email,
+            name: result.user.displayName,
+            avatar: { url: result.user.photoURL },
+          }),
+        },
+      );
 
-      login(userData, token); // ✅ SYNC TO ZUSTAND
+      const userData = await response.json();
+
+      if (!response.ok) {
+        await signOut(auth);
+        toast.error(userData.message || "Login failed.");
+        return;
+      }
+
+      login(userData, token);
       toast.success("Welcome back! 🎉");
       navigate("/");
     } catch (err) {
@@ -104,7 +131,7 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-primary-50 via-white to-brand-green/5 px-4 relative overflow-hidden">
-      {/* 🎨 Decorative Animated Blur Blobs */}
+      {/*  Decorative Animated Blur Blobs */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-32 -right-32 w-72 h-72 bg-primary-300/40 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-pulse"></div>
         <div className="absolute -bottom-32 -left-32 w-72 h-72 bg-brand-green/30 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-pulse delay-700"></div>
@@ -127,7 +154,7 @@ export default function LoginPage() {
           </p>
         </div>
 
-        {/* ✨ Glassmorphism Card */}
+        {/* Glassmorphism Card */}
         <div className="bg-white/80 backdrop-blur-xl p-8 rounded-3xl shadow-card-hover border border-white/60">
           <h2 className="text-2xl font-bold text-center text-gray-900 mb-2">
             Welcome back
@@ -213,7 +240,7 @@ export default function LoginPage() {
             </div>
           </div>
 
-          {/* ✅ Google Login Button */}
+          {/* Google Login Button */}
           <button
             type="button"
             onClick={handleGoogleLogin}
