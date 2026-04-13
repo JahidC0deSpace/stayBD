@@ -16,6 +16,13 @@ const safeFormatDate = (val, fmt = "EEE, MMM dd") => {
   return isValid(d) ? format(d, fmt) : "Date TBA";
 };
 
+// ── NEW: reusable past-date check ─────────────────────────────────────────────
+const isDatePast = (val) => {
+  if (!val) return false;
+  const d = typeof val === "string" ? parseISO(val) : new Date(val);
+  return isValid(d) && d < new Date();
+};
+
 function ScheduleCard({ session, selected, onSelect }) {
   const slotMax = session.maxParticipants ?? 0;
   const slotCurrent = session.currentParticipants ?? 0;
@@ -23,20 +30,24 @@ function ScheduleCard({ session, selected, onSelect }) {
     session.availableSlots ?? Math.max(0, slotMax - slotCurrent);
   const isFull = spotsLeft <= 0;
 
+  // ── FIX: treat past-dated sessions as unavailable ─────────────────────────
+  const isPast = isDatePast(session.date);
+  const isUnavailable = isFull || isPast;
+
   return (
     <div
-      onClick={() => !isFull && onSelect(session._id)}
+      onClick={() => !isUnavailable && onSelect(session._id)}
       style={{
         padding: 12,
         border: `1.5px solid ${selected ? "var(--accent)" : "var(--border)"}`,
         borderRadius: 10,
-        cursor: isFull ? "not-allowed" : "pointer",
+        cursor: isUnavailable ? "not-allowed" : "pointer",
         background: selected
           ? "rgba(124,92,252,0.1)"
-          : isFull
+          : isUnavailable
             ? "rgba(0,0,0,0.03)"
             : "var(--surface2)",
-        opacity: isFull ? 0.55 : 1,
+        opacity: isUnavailable ? 0.55 : 1,
         transition: "all 0.2s",
       }}
     >
@@ -64,22 +75,27 @@ function ScheduleCard({ session, selected, onSelect }) {
           ⏱️ {session.durationHours}h duration
         </div>
       )}
+      {/* ── FIX: show "Expired" label for past sessions ── */}
       <div
         style={{
           fontSize: 11,
           fontWeight: 600,
-          color: isFull
-            ? "var(--error)"
-            : spotsLeft <= 2
-              ? "#f0a500"
-              : "var(--success)",
+          color: isPast
+            ? "var(--muted)"
+            : isFull
+              ? "var(--error)"
+              : spotsLeft <= 2
+                ? "#f0a500"
+                : "var(--success)",
         }}
       >
-        {isFull
-          ? "Sold out"
-          : spotsLeft <= 2
-            ? `⚡ Only ${spotsLeft} spot${spotsLeft !== 1 ? "s" : ""} left`
-            : `${spotsLeft} spot${spotsLeft !== 1 ? "s" : ""} available`}
+        {isPast
+          ? "Expired"
+          : isFull
+            ? "Sold out"
+            : spotsLeft <= 2
+              ? `⚡ Only ${spotsLeft} spot${spotsLeft !== 1 ? "s" : ""} left`
+              : `${spotsLeft} spot${spotsLeft !== 1 ? "s" : ""} available`}
       </div>
     </div>
   );
@@ -93,7 +109,10 @@ export default function ExperienceForm({ data, form, updateForm }) {
     : [];
   const languages = Array.isArray(data.languages) ? data.languages : [];
 
-  const groupedByDate = schedule.reduce((acc, s) => {
+  // ── FIX: only group/display sessions that are not in the past ─────────────
+  const availableSchedule = schedule.filter((s) => !isDatePast(s?.date));
+
+  const groupedByDate = availableSchedule.reduce((acc, s) => {
     const key = safeFormatDate(s.date, "yyyy-MM-dd");
     if (!acc[key]) acc[key] = [];
     acc[key].push(s);
@@ -106,7 +125,8 @@ export default function ExperienceForm({ data, form, updateForm }) {
 
       <div style={{ marginBottom: 20 }}>
         <FormLabel>Select Session</FormLabel>
-        {schedule.length === 0 ? (
+        {/* ── FIX: check availableSchedule instead of schedule ── */}
+        {availableSchedule.length === 0 ? (
           <div
             style={{
               padding: "16px",
@@ -117,7 +137,7 @@ export default function ExperienceForm({ data, form, updateForm }) {
               textAlign: "center",
             }}
           >
-            No sessions available yet. Contact the host for more info.
+            No upcoming sessions available. Contact the host for more info.
           </div>
         ) : Object.keys(groupedByDate).length > 1 ? (
           <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
@@ -159,7 +179,7 @@ export default function ExperienceForm({ data, form, updateForm }) {
           <div
             style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}
           >
-            {schedule.map((s) => (
+            {availableSchedule.map((s) => (
               <ScheduleCard
                 key={s._id}
                 session={s}

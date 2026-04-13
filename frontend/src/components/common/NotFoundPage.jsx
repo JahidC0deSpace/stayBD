@@ -1,25 +1,25 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { ShieldAlert, ArrowLeft, Home } from "lucide-react"; // Optional: lucide-react for icons
+import { AlertCircle, ArrowLeft, Home } from "lucide-react";
 
-const UnauthorizedPage = () => {
+const NotFoundPage = () => {
   const navigate = useNavigate();
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
       <div className="max-w-md w-full text-center">
         {/* Icon Circle */}
-        <div className="mx-auto flex items-center justify-center h-20 w-20 rounded-full bg-red-100 mb-6">
-          <ShieldAlert className="h-10 w-10 text-red-600" strokeWidth={2} />
+        <div className="mx-auto flex items-center justify-center h-20 w-20 rounded-full bg-yellow-100 mb-6">
+          <AlertCircle className="h-10 w-10 text-yellow-600" strokeWidth={2} />
         </div>
 
         {/* Text Content */}
         <h1 className="text-4xl font-extrabold text-gray-900 tracking-tight mb-2">
-          403 - Restricted Access
+          404 - Page Not Found
         </h1>
         <p className="text-lg text-gray-600 mb-8">
-          Oops! You don't have the required permissions to view this page.
-          Please contact an administrator if you believe this is a mistake.
+          Oops! The page you're looking for doesn't exist or has been moved.
+          Please check the URL or head back home.
         </p>
 
         {/* Action Buttons */}
@@ -45,4 +45,4 @@ const UnauthorizedPage = () => {
   );
 };
 
-export default UnauthorizedPage;
+export default NotFoundPage;

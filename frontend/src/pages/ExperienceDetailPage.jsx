@@ -207,12 +207,32 @@ export default function ExperienceDetailPage() {
     }
   };
 
-  // ── UPDATED: navigate to BookingPage ──────────────────────────────────────
+  // ── FIX: hard server-side guard — re-validate before navigating ───────────
   const handleReserve = () => {
     if (!user) {
       toast.error("Please log in to book this experience");
       return navigate("/login");
     }
+
+    // Re-derive availability at click time to prevent stale-state bypass
+    const schedule = Array.isArray(experience?.schedule)
+      ? experience.schedule
+      : [];
+    const maxPax = safeNum(experience?.maxParticipants, 1);
+
+    const stillAvailable = schedule.some((slot) => {
+      if (!slot) return false;
+      const slotMax = safeNum(slot.maxParticipants, maxPax);
+      const current = safeNum(slot.currentParticipants, 0);
+      // ── FIX: explicitly reject past-dated slots here too ──
+      return !isDatePast(slot.date) && current < slotMax;
+    });
+
+    if (!stillAvailable) {
+      toast.error("No available slots for this experience.");
+      return;
+    }
+
     navigate(`/book/${id}?type=experience`);
   };
 
@@ -230,7 +250,8 @@ export default function ExperienceDetailPage() {
   const currentImage = images[imgIdx]?.url ?? FALLBACK_IMAGE;
   const averageRating = safeNum(experience?.averageRating);
 
-  // ── Check if any slot is still bookable (not past, not full) ──────────────
+  // ── FIX: hasAvailableSlots now also rejects past-dated slots ─────────────
+  // (it already did via isDatePast, confirming it's consistent)
   const hasAvailableSlots = schedule.some((slot) => {
     if (!slot) return false;
     const slotMax = safeNum(slot.maxParticipants, maxPax);

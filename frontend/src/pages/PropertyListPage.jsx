@@ -39,7 +39,7 @@ export default function PropertyListPage() {
         else if (v) params.set(k, v);
       });
 
-      // ✅ Now using your structured propertyAPI
+      // Now using your structured propertyAPI
       const res = await propertyAPI.getAll(params);
 
       setProperties(res.data.data.properties || res.data.data || []);

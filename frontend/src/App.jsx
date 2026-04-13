@@ -23,6 +23,7 @@ import AccessDenied from "./components/common/AccessDenied";
 import UnauthorizedPage from "./components/common/UnauthorizedPage";
 import MapSearchPage from "./pages/MapSearchPage";
 import WishlistPage from "./pages/WishlistPage";
+import NotFoundPage from "./components/common/NotFoundPage";
 
 // Components
 import ProtectedRoute from "./components/auth/ProtectedRoute";
@@ -91,7 +92,6 @@ function App() {
           const token = await firebaseUser.getIdToken();
           api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
-          // Guaranteed basic data from Firebase
           const fallbackUser = {
             uid: firebaseUser.uid,
             email: firebaseUser.email,
@@ -101,19 +101,15 @@ function App() {
           };
 
           try {
-            // Attempt to get the rich profile from your MongoDB
             const response = await api.get("/users/me");
-
-            // Flexibly catch the data regardless of how your backend nests it
             const dbUser = response.data.data;
             //ban check
             if (dbUser.isBanned) {
               alert("Your account has been banned. Please contact support.");
               logout();
-              return; // Stop the login process
+              return;
             }
 
-            // 🤝 Merge them! Backend data overwrites fallback data where available
             login({ ...fallbackUser, ...dbUser }, token);
             useWishlistStore.getState().hydrate(dbUser?.wishlist ?? []);
           } catch (dbError) {
@@ -121,7 +117,7 @@ function App() {
               "Could not fetch from MongoDB, using Firebase data:",
               dbError,
             );
-            // If backend fails, log them in with Firebase data anyway!
+
             login(fallbackUser, token);
           }
         } catch (error) {
@@ -129,7 +125,7 @@ function App() {
           logout();
         }
       } else {
-        logout(); // Only log out if Firebase confirms no user exists
+        logout();
       }
 
       setAuthLoading(false);
@@ -146,7 +142,7 @@ function App() {
       <Toaster position="top-center" reverseOrder={false} />
 
       <Routes>
-        {/* 🟢 Public Routes */}
+        {/* Public Routes */}
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
@@ -159,6 +155,7 @@ function App() {
         <Route path="/experiences" element={<ExperienceListPage />} />
         <Route path="/experiences/:id" element={<ExperienceDetailPage />} />
         <Route path="/map" element={<MapSearchPage />} />
+        <Route path="*" element={<NotFoundPage />} />
 
         <Route element={<MainLayout />}>
           <Route path="/" element={<HomePage />} />
@@ -229,7 +226,7 @@ function App() {
             </ProtectedRoute>
           }
         />
-        {/* 🔵 Guest Routes (Dashboard Layout) */}
+        {/* Guest Routes */}
         <Route
           path="/guest"
           element={
@@ -241,7 +238,7 @@ function App() {
           <Route path="dashboard" element={<GuestDashboard />} />
           <Route path="my-bookings" element={<MyBookingsPage />} />
         </Route>
-        {/* 🟠 Host Routes */}
+        {/* Host Routes */}
         <Route
           path="/host"
           element={
@@ -295,7 +292,7 @@ function App() {
             </ProtectedRoute>
           }
         />
-        {/* 🟣 Service Provider Routes */}
+        {/* Service Provider Routes */}
         <Route
           path="/provider"
           element={
@@ -364,7 +361,7 @@ function App() {
             </ProtectedRoute>
           }
         />
-        {/* 🔴 Admin Routes */}
+        {/* Admin Routes */}
         <Route
           path="/admin"
           element={
