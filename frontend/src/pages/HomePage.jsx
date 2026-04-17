@@ -15,6 +15,18 @@ import {
 import { useAuthStore } from "../store/useAuthStore";
 import PropertyCard from "../components/property/PropertyCard";
 import { ALL_DISTRICTS, RENTAL_TYPES } from "../utils/bdLocations";
+import {
+  FiActivity,
+  FiCalendar,
+  FiClock,
+  FiHome,
+  FiServer,
+  FiStar,
+  FiSun,
+  FiTool,
+  FiTrendingUp,
+  FiZap,
+} from "react-icons/fi";
 
 // ─── ICONS ─────────────────────────────────────────────────────────────────────
 const StarIcon = () => (
@@ -100,7 +112,7 @@ const getReviewCount = (item) =>
 const TYPE_CONFIG = {
   property: {
     accent: "#059669",
-    tag: "🏠",
+    tag: <FiHome size={14} />,
     label: "Property",
     getPrice: (i) =>
       i.pricePerNight ? `৳${i.pricePerNight.toLocaleString()}/night` : null,
@@ -109,7 +121,7 @@ const TYPE_CONFIG = {
   },
   service: {
     accent: "#d97706",
-    tag: "🛎️",
+    tag: <FiServer size={14} />,
     label: "Service",
     getPrice: (i) => (i.price ? `৳${i.price.toLocaleString()}` : null),
     getExtra: (i) => i.category || null,
@@ -117,7 +129,7 @@ const TYPE_CONFIG = {
   },
   experience: {
     accent: "#7c3aed",
-    tag: "✨",
+    tag: <FiActivity size={14} />,
     label: "Experience",
     getPrice: (i) =>
       i.pricePerPerson ? `৳${i.pricePerPerson.toLocaleString()}/person` : null,
@@ -232,9 +244,13 @@ function SliderCard({ item, type, onClick }) {
               padding: "3px 8px",
               borderRadius: 20,
               backdropFilter: "blur(4px)",
+              display: "flex",
+              alignItems: "center",
+              gap: "4px",
             }}
           >
-            🔥 {item.bookingCount || item.totalBookings}+ booked
+            <FiTrendingUp size={12} /> {item.bookingCount || item.totalBookings}
+            + booked
           </span>
         )}
       </div>
@@ -775,23 +791,25 @@ const HomePage = () => {
         <div style={{ display: "flex", flexDirection: "column", gap: 48 }}>
           <FeaturedSection
             title="Top Properties"
-            icon="🏠"
+            icon={<FiHome className="text-[#059669]" />}
             viewAllPath="/properties"
             items={sliderData.properties}
             type="property"
             loading={sliderLoading.properties}
           />
+
           <FeaturedSection
             title="Popular Services"
-            icon="🛎️"
+            icon={<FiTool className="text-[#d97706]" />}
             viewAllPath="/services"
             items={sliderData.services}
             type="service"
             loading={sliderLoading.services}
           />
+
           <FeaturedSection
             title="Trending Experiences"
-            icon="✨"
+            icon={<FiZap className="text-[#7c3aed]" />}
             viewAllPath="/experiences"
             items={sliderData.experiences}
             type="experience"
@@ -859,18 +877,22 @@ const HomePage = () => {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
           {[
             {
-              icon: "🏠",
+              icon: <FiClock size={18} />,
               label: "Short Term",
               link: "/search?rentalType=short_term",
             },
             {
-              icon: "🏢",
+              icon: <FiCalendar size={18} />,
               label: "Monthly Stay",
               link: "/search?rentalType=long_term",
             },
-            { icon: "✨", label: "Featured", link: "/search?sort=popular" },
             {
-              icon: "🌿",
+              icon: <FiStar size={18} />,
+              label: "Featured",
+              link: "/search?sort=popular",
+            },
+            {
+              icon: <FiSun size={18} />,
               label: "Resorts",
               link: "/search?propertyType=resort",
             },
